@@ -1,22 +1,5 @@
 from django.contrib.sitemaps import Sitemap
-from django.urls import reverse
 from .models import SEOPage
-
-
-class StaticViewSitemap(Sitemap):
-    priority = 0.8
-    changefreq = 'weekly'
-
-    def items(self):
-        return [
-            'home',
-            'about',
-            'contact',
-            'services',
-        ]
-
-    def location(self, item):
-        return reverse(item)
 
 
 class SEOPageSitemap(Sitemap):

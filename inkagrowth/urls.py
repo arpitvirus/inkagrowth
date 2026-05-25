@@ -7,13 +7,12 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
-from front.sitemap import StaticViewSitemap, SEOPageSitemap
+from front.sitemap import SEOPageSitemap
 
 # =========================================================
 # FRONTEND VIEWS
 # =========================================================
 sitemaps = {
-    'static': StaticViewSitemap,
     'seo_pages': SEOPageSitemap,
 }
 
@@ -39,7 +38,7 @@ urlpatterns = [
         admin.site.urls
     ),
 
-    path(
+   path(
         'sitemap.xml',
         sitemap,
         {'sitemaps': sitemaps},
