@@ -2,7 +2,15 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 
 from .models import *
+from django.shortcuts import render
+from django.http import HttpResponse
 
+def robots_txt(request):
+    return render(
+        request,
+        "robots.txt",
+        content_type="text/plain"
+    )
 
 # HOME PAGE
 def index(request):
