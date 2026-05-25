@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+import dj_database_url
 
 from pathlib import Path
 import os
@@ -156,3 +157,10 @@ GOOGLE_SHEETS_SYNC_ENABLED = (
     os.environ.get('GOOGLE_SHEETS_SYNC_ENABLED', 'true').lower() in TRUE_VALUES
     and bool(GOOGLE_SHEETS_SPREADSHEET_ID)
 )
+
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
+}
