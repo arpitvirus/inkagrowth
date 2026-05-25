@@ -1,0 +1,68 @@
+{% extends 'crm/base/base.html' %}
+
+{% block title %}Services | InkaGROWTH CRM{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-kicker">Catalog</p>
+        <h2>Services</h2>
+        <p>Maintain the agency service catalog used by leads and client accounts.</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-primary" href="{% url 'add_service' %}">
+            <i data-lucide="plus"></i>
+            <span>Add Service</span>
+        </a>
+    </div>
+</section>
+
+<form class="toolbar" method="get">
+    <div class="filters">
+        <label class="search-field">
+            <i data-lucide="search"></i>
+            <input type="search" name="search" value="{{ search|default:'' }}" placeholder="Search service name or description">
+        </label>
+    </div>
+    <button class="btn btn-secondary" type="submit">
+        <i data-lucide="filter"></i>
+        <span>Filter</span>
+    </button>
+</form>
+
+<section class="panel">
+    <div class="table-wrap">
+        <table class="crm-table">
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Price</th>
+                    <th>Description</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for service in services %}
+                <tr>
+                    <td><strong>{{ service.name }}</strong></td>
+                    <td>Rs. {{ service.price|floatformat:2 }}</td>
+                    <td>{{ service.description|default:"No description"|truncatechars:120 }}</td>
+                    <td>{{ service.created_at|date:"M d, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">
+                        <div class="empty-state">
+                            <i data-lucide="package-check"></i>
+                            <h3>No services found</h3>
+                            <p>Add services such as SEO, paid ads, website development, or social media management.</p>
+                            <a class="btn btn-primary" href="{% url 'add_service' %}">Add Service</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

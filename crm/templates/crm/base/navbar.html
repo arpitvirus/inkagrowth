@@ -1,0 +1,50 @@
+<header class="navbar">
+    <div class="navbar-left">
+        <button class="mobile-menu-button" type="button" data-sidebar-toggle aria-label="Open sidebar">
+            <i data-lucide="menu"></i>
+        </button>
+        <div>
+            <p class="eyebrow">CRM Workspace</p>
+            {% with route=request.resolver_match.url_name %}
+            <h1>
+                {% if route == 'dashboard' %}Dashboard
+                {% elif route == 'lead_list' %}Leads
+                {% elif route == 'add_lead' %}Add Lead
+                {% elif route == 'lead_detail' %}Lead Details
+                {% elif route == 'edit_lead' %}Edit Lead
+                {% elif route == 'client_list' %}Clients
+                {% elif route == 'add_client' %}Add Client
+                {% elif route == 'client_detail' %}Client Details
+                {% elif route == 'edit_client' %}Edit Client
+                {% elif route == 'task_list' %}Tasks
+                {% elif route == 'add_task' %}Add Task
+                {% elif route == 'edit_task' %}Edit Task
+                {% elif route == 'payment_list' %}Payments
+                {% elif route == 'add_payment' %}Add Payment
+                {% elif route == 'service_list' %}Services
+                {% elif route == 'add_service' %}Add Service
+                {% elif route == 'activity_logs' %}Activity Logs
+                {% elif route == 'add_followup' %}Add Follow-up
+                {% elif route == 'add_lead_note' %}Add Note
+                {% elif route == 'add_communication' %}Add Communication
+                {% elif route == 'upload_client_file' %}Upload File
+                {% else %}CRM{% endif %}
+            </h1>
+            {% endwith %}
+        </div>
+    </div>
+
+    <div class="navbar-right">
+        <a class="btn btn-ghost" href="{% url 'index' %}" target="_blank" rel="noreferrer">
+            <i data-lucide="external-link"></i>
+            <span>Website</span>
+        </a>
+        <div class="topbar-profile">
+            <span class="avatar">{{ request.user.username|first|upper }}</span>
+            <span>
+                <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+                <small>Signed in</small>
+            </span>
+        </div>
+    </div>
+</header>

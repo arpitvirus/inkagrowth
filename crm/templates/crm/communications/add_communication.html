@@ -1,0 +1,47 @@
+{% extends 'crm/base/base.html' %}
+
+{% block title %}Add Communication | InkaGROWTH CRM{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-kicker">Communication</p>
+        <h2>Log communication</h2>
+        <p>Record a call, WhatsApp message, email, or meeting for {{ lead.name }}.</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-secondary" href="{% url 'lead_detail' lead.pk %}">
+            <i data-lucide="arrow-left"></i>
+            <span>Back</span>
+        </a>
+    </div>
+</section>
+
+<form class="form-card" method="post">
+    {% csrf_token %}
+    <div class="form-grid">
+        <div class="form-field full">
+            <label for="communication_type">Type</label>
+            <select id="communication_type" name="communication_type" required>
+                <option value="call">Call</option>
+                <option value="whatsapp">WhatsApp</option>
+                <option value="email">Email</option>
+                <option value="meeting">Meeting</option>
+            </select>
+        </div>
+
+        <div class="form-field full">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Summarize the conversation, decision, or response" required></textarea>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a class="btn btn-secondary" href="{% url 'lead_detail' lead.pk %}">Cancel</a>
+        <button class="btn btn-primary" type="submit">
+            <i data-lucide="message-square-plus"></i>
+            <span>Save Communication</span>
+        </button>
+    </div>
+</form>
+{% endblock %}

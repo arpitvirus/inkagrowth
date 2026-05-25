@@ -1,0 +1,114 @@
+{% extends 'crm/base/base.html' %}
+
+{% block title %}Edit Lead | InkaGROWTH CRM{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-kicker">Pipeline</p>
+        <h2>Edit lead</h2>
+        <p>Update lead details, pipeline stage, assignment, and internal notes.</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-secondary" href="{% url 'lead_detail' lead.pk %}">
+            <i data-lucide="arrow-left"></i>
+            <span>Back</span>
+        </a>
+    </div>
+</section>
+
+<form class="form-card" method="post">
+    {% csrf_token %}
+    <div class="form-grid">
+        <div class="form-field">
+            <label for="name">Lead name</label>
+            <input id="name" name="name" type="text" value="{{ lead.name }}" required>
+        </div>
+
+        <div class="form-field">
+            <label for="company_name">Company</label>
+            <input id="company_name" name="company_name" type="text" value="{{ lead.company_name|default:'' }}">
+        </div>
+
+        <div class="form-field">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" value="{{ lead.phone }}" required>
+        </div>
+
+        <div class="form-field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" value="{{ lead.email|default:'' }}">
+        </div>
+
+        <div class="form-field">
+            <label for="website">Website</label>
+            <input id="website" name="website" type="url" value="{{ lead.website|default:'' }}">
+        </div>
+
+        <div class="form-field">
+            <label for="lead_source">Lead source</label>
+            <select id="lead_source" name="lead_source">
+                {% for value, label in lead_source_choices %}
+                <option value="{{ value }}" {% if lead.lead_source == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label for="service">Interested service</label>
+            <select id="service" name="service">
+                <option value="">Select a service</option>
+                {% for service in services %}
+                <option value="{{ service.id }}" {% if service.id == lead.interested_service_id %}selected{% endif %}>{{ service.name }} - Rs. {{ service.price|floatformat:2 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label for="budget">Budget</label>
+            <input id="budget" name="budget" type="number" min="0" step="0.01" value="{{ lead.budget|default_if_none:'' }}">
+        </div>
+
+        <div class="form-field">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if lead.status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label for="pipeline_stage">Pipeline stage</label>
+            <select id="pipeline_stage" name="pipeline_stage">
+                {% for value, label in pipeline_choices %}
+                <option value="{{ value }}" {% if lead.pipeline_stage == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field full">
+            <label for="assigned_to">Assigned to</label>
+            <select id="assigned_to" name="assigned_to">
+                <option value="">Unassigned</option>
+                {% for user in users %}
+                <option value="{{ user.id }}" {% if lead.assigned_to_id == user.id %}selected{% endif %}>{{ user.get_full_name|default:user.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field full">
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes">{{ lead.notes|default:'' }}</textarea>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a class="btn btn-secondary" href="{% url 'lead_detail' lead.pk %}">Cancel</a>
+        <button class="btn btn-primary" type="submit">
+            <i data-lucide="save"></i>
+            <span>Update Lead</span>
+        </button>
+    </div>
+</form>
+{% endblock %}

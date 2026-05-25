@@ -1,0 +1,194 @@
+{% extends 'crm/base/base.html' %}
+
+{% block title %}{{ client.name }} | InkaGROWTH CRM{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-kicker">Client account</p>
+        <h2>{{ client.name }}</h2>
+        <p>{{ client.company_name|default:"Client account" }}{% if client.service %} on {{ client.service.name }}{% endif %}</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-secondary" href="{% url 'client_list' %}">
+            <i data-lucide="arrow-left"></i>
+            <span>Clients</span>
+        </a>
+        <a class="btn btn-secondary" href="{% url 'edit_client' client.pk %}">
+            <i data-lucide="pencil"></i>
+            <span>Edit</span>
+        </a>
+        <a class="btn btn-primary" href="{% url 'add_payment' client.pk %}">
+            <i data-lucide="plus"></i>
+            <span>Add Payment</span>
+        </a>
+    </div>
+</section>
+
+<section class="detail-grid">
+    <article class="detail-card">
+        <h3>Account details</h3>
+        <div class="detail-list">
+            <div class="detail-row">
+                <span>Status</span>
+                <strong><span class="badge status-{{ client.status }}">{{ client.get_status_display }}</span></strong>
+            </div>
+            <div class="detail-row">
+                <span>Phone</span>
+                <strong>{{ client.phone }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Email</span>
+                <strong>{{ client.email|default:"No email" }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Website</span>
+                <strong>
+                    {% if client.website %}
+                    <a href="{{ client.website }}" target="_blank" rel="noreferrer">{{ client.website }}</a>
+                    {% else %}
+                    No website
+                    {% endif %}
+                </strong>
+            </div>
+            <div class="detail-row">
+                <span>Service</span>
+                <strong>{{ client.service.name|default:"No service selected" }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Monthly</span>
+                <strong>Rs. {{ client.monthly_charges|floatformat:2 }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Renewal</span>
+                <strong>{{ client.renewal_date|date:"M d, Y"|default:"Not set" }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Created by</span>
+                <strong>{{ client.created_by|default:"CRM" }}</strong>
+            </div>
+        </div>
+    </article>
+
+    <article class="detail-card">
+        <h3>Notes and address</h3>
+        <div class="detail-list">
+            <div class="detail-row">
+                <span>Address</span>
+                <strong>{{ client.address|default:"No address added"|linebreaksbr }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Notes</span>
+                <strong>{{ client.notes|default:"No notes added"|linebreaksbr }}</strong>
+            </div>
+        </div>
+        <div class="page-actions">
+            <a class="btn btn-secondary" href="{% url 'upload_client_file' client.pk %}">
+                <i data-lucide="upload"></i>
+                <span>Upload File</span>
+            </a>
+            <a class="btn btn-danger" href="{% url 'delete_client' client.pk %}" data-confirm="Delete this client?">
+                <i data-lucide="trash-2"></i>
+                <span>Delete</span>
+            </a>
+        </div>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h3>Payments</h3>
+            <p>Invoices, retainers, and renewal tracking for this client.</p>
+        </div>
+        <a class="btn btn-ghost" href="{% url 'add_payment' client.pk %}">Add Payment</a>
+    </div>
+    <div class="table-wrap">
+        <table class="crm-table">
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Payment date</th>
+                    <th>Next date</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td><strong>Rs. {{ payment.amount|floatformat:2 }}</strong></td>
+                    <td>{{ payment.payment_date|date:"M d, Y" }}</td>
+                    <td>{{ payment.next_payment_date|date:"M d, Y"|default:"Not set" }}</td>
+                    <td><span class="badge status-{{ payment.payment_status }}">{{ payment.get_payment_status_display }}</span></td>
+                    <td>{{ payment.notes|default:"No notes" }}</td>
+                    <td>
+                        <a class="btn btn-danger btn-icon" href="{% url 'delete_payment' payment.pk %}" data-confirm="Delete this payment?" aria-label="Delete payment">
+                            <i data-lucide="trash-2"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <i data-lucide="indian-rupee"></i>
+                            <h3>No payments recorded</h3>
+                            <p>Add payment records to keep revenue and renewals visible.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h3>Files</h3>
+            <p>Contracts, invoices, reports, and client assets.</p>
+        </div>
+        <a class="btn btn-ghost" href="{% url 'upload_client_file' client.pk %}">Upload</a>
+    </div>
+    <div class="table-wrap">
+        <table class="crm-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Uploaded by</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for file in files %}
+                <tr>
+                    <td><strong>{{ file.title }}</strong></td>
+                    <td>{{ file.uploaded_by|default:"CRM" }}</td>
+                    <td>{{ file.created_at|date:"M d, Y h:i A" }}</td>
+                    <td>
+                        <div class="table-actions">
+                            <a class="btn btn-secondary btn-icon" href="{{ file.file.url }}" target="_blank" rel="noreferrer" aria-label="View file"><i data-lucide="external-link"></i></a>
+                            <a class="btn btn-danger btn-icon" href="{% url 'delete_client_file' file.pk %}" data-confirm="Delete this file?" aria-label="Delete file"><i data-lucide="trash-2"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">
+                        <div class="empty-state">
+                            <i data-lucide="folder-open"></i>
+                            <h3>No files uploaded</h3>
+                            <p>Attach client documents, reports, or contract files as needed.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends 'crm/base/base.html' %}
+
+{% block title %}Tasks | InkaGROWTH CRM{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-kicker">Execution</p>
+        <h2>Tasks</h2>
+        <p>Coordinate deliverables, follow-ups, reporting, onboarding, and daily agency work.</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-primary" href="{% url 'add_task' %}">
+            <i data-lucide="plus"></i>
+            <span>Add Task</span>
+        </a>
+    </div>
+</section>
+
+<form class="csrf-anchor">{% csrf_token %}</form>
+<form class="toolbar" method="get">
+    <div class="filters">
+        <label class="search-field">
+            <i data-lucide="search"></i>
+            <input type="search" name="search" value="{{ search|default:'' }}" placeholder="Search tasks or clients">
+        </label>
+        <label class="select-field">
+            <select name="status">
+                <option value="">All statuses</option>
+                {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label class="select-field">
+            <select name="priority">
+                <option value="">All priorities</option>
+                {% for value, label in priority_choices %}
+                <option value="{{ value }}" {% if priority == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+    <button class="btn btn-secondary" type="submit">
+        <i data-lucide="filter"></i>
+        <span>Filter</span>
+    </button>
+</form>
+
+<section class="panel">
+    <div class="table-wrap">
+        <table class="crm-table">
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>Client</th>
+                    <th>Assigned</th>
+                    <th>Due</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in page_obj %}
+                <tr>
+                    <td>
+                        <span class="table-title">
+                            <strong>{{ task.title }}</strong>
+                            <small>{{ task.description|default:"No description"|truncatechars:80 }}</small>
+                        </span>
+                    </td>
+                    <td>
+                        {% if task.related_client %}
+                        <a href="{% url 'client_detail' task.related_client.pk %}">{{ task.related_client.name }}</a>
+                        {% else %}
+                        <span class="muted">No client</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if task.assigned_to %}
+                        {{ task.assigned_to.get_full_name|default:task.assigned_to.username }}
+                        {% else %}
+                        <span class="muted">Unassigned</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ task.due_date|date:"M d, Y"|default:"No date" }}</td>
+                    <td><span class="badge status-{{ task.priority }}">{{ task.get_priority_display }}</span></td>
+                    <td>
+                        <select class="task-status-select" data-original-value="{{ task.status }}" data-task-status-url="{% url 'update_task_status' task.pk %}">
+                            {% for value, label in status_choices %}
+                            <option value="{{ value }}" {% if task.status == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <a class="btn btn-secondary btn-icon" href="{% url 'edit_task' task.pk %}" aria-label="Edit task"><i data-lucide="pencil"></i></a>
+                            <a class="btn btn-danger btn-icon" href="{% url 'delete_task' task.pk %}" data-confirm="Delete this task?" aria-label="Delete task"><i data-lucide="trash-2"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <i data-lucide="list-checks"></i>
+                            <h3>No tasks found</h3>
+                            <p>Create tasks to coordinate delivery across clients and leads.</p>
+                            <a class="btn btn-primary" href="{% url 'add_task' %}">Add Task</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <div class="pagination">
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        <div class="pagination-links">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if priority %}&priority={{ priority }}{% endif %}">Previous</a>
+            {% endif %}
+            <span class="page-number is-current">{{ page_obj.number }}</span>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if priority %}&priority={{ priority }}{% endif %}">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

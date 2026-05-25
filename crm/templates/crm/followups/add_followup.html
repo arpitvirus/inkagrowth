@@ -1,0 +1,42 @@
+{% extends 'crm/base/base.html' %}
+
+{% block title %}Add Follow-up | InkaGROWTH CRM{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-kicker">Follow-up</p>
+        <h2>Schedule follow-up</h2>
+        <p>Create the next touchpoint for {{ lead.name }}.</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-secondary" href="{% url 'lead_detail' lead.pk %}">
+            <i data-lucide="arrow-left"></i>
+            <span>Back</span>
+        </a>
+    </div>
+</section>
+
+<form class="form-card" method="post">
+    {% csrf_token %}
+    <div class="form-grid">
+        <div class="form-field full">
+            <label for="followup_date">Follow-up date and time</label>
+            <input id="followup_date" name="followup_date" type="datetime-local" required>
+        </div>
+
+        <div class="form-field full">
+            <label for="note">Note</label>
+            <textarea id="note" name="note" placeholder="What should the team discuss or send?" required></textarea>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a class="btn btn-secondary" href="{% url 'lead_detail' lead.pk %}">Cancel</a>
+        <button class="btn btn-primary" type="submit">
+            <i data-lucide="calendar-plus"></i>
+            <span>Schedule Follow-up</span>
+        </button>
+    </div>
+</form>
+{% endblock %}

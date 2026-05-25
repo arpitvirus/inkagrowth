@@ -1,0 +1,211 @@
+{% extends 'crm/base/base.html' %}
+
+{% block title %}{{ lead.name }} | InkaGROWTH CRM{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-kicker">Lead profile</p>
+        <h2>{{ lead.name }}</h2>
+        <p>{{ lead.company_name|default:"Independent prospect" }}{% if lead.interested_service %} interested in {{ lead.interested_service.name }}{% endif %}</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-secondary" href="{% url 'lead_list' %}">
+            <i data-lucide="arrow-left"></i>
+            <span>Leads</span>
+        </a>
+        <a class="btn btn-secondary" href="{% url 'edit_lead' lead.pk %}">
+            <i data-lucide="pencil"></i>
+            <span>Edit</span>
+        </a>
+        {% if lead.status != 'converted' %}
+        <a class="btn btn-primary" href="{% url 'convert_lead_to_client' lead.pk %}" data-confirm="Convert this lead into a client?">
+            <i data-lucide="check-circle"></i>
+            <span>Convert</span>
+        </a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="detail-grid">
+    <article class="detail-card">
+        <h3>Lead details</h3>
+        <div class="detail-list">
+            <div class="detail-row">
+                <span>Status</span>
+                <strong><span class="badge status-{{ lead.status }}">{{ lead.get_status_display }}</span></strong>
+            </div>
+            <div class="detail-row">
+                <span>Pipeline</span>
+                <strong><span class="badge status-{{ lead.pipeline_stage }}">{{ lead.get_pipeline_stage_display }}</span></strong>
+            </div>
+            <div class="detail-row">
+                <span>Phone</span>
+                <strong>{{ lead.phone }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Email</span>
+                <strong>{{ lead.email|default:"No email" }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Website</span>
+                <strong>
+                    {% if lead.website %}
+                    <a href="{{ lead.website }}" target="_blank" rel="noreferrer">{{ lead.website }}</a>
+                    {% else %}
+                    No website
+                    {% endif %}
+                </strong>
+            </div>
+            <div class="detail-row">
+                <span>Source</span>
+                <strong>{{ lead.get_lead_source_display }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Budget</span>
+                <strong>{% if lead.budget %}Rs. {{ lead.budget|floatformat:2 }}{% else %}Not shared{% endif %}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Assigned</span>
+                <strong>
+                    {% if lead.assigned_to %}
+                    {{ lead.assigned_to.get_full_name|default:lead.assigned_to.username }}
+                    {% else %}
+                    Unassigned
+                    {% endif %}
+                </strong>
+            </div>
+            <div class="detail-row">
+                <span>Created</span>
+                <strong>{{ lead.created_at|date:"M d, Y h:i A" }}</strong>
+            </div>
+        </div>
+    </article>
+
+    <article class="detail-card">
+        <h3>Internal notes</h3>
+        <p class="muted">{{ lead.notes|default:"No summary notes added yet."|linebreaksbr }}</p>
+        <div class="page-actions">
+            <a class="btn btn-secondary" href="{% url 'add_lead_note' lead.pk %}">
+                <i data-lucide="sticky-note"></i>
+                <span>Add Note</span>
+            </a>
+            <a class="btn btn-secondary" href="{% url 'add_communication' lead.pk %}">
+                <i data-lucide="message-square-plus"></i>
+                <span>Add Communication</span>
+            </a>
+            <a class="btn btn-primary" href="{% url 'add_followup' lead.pk %}">
+                <i data-lucide="calendar-plus"></i>
+                <span>Add Follow-up</span>
+            </a>
+        </div>
+    </article>
+</section>
+
+<section class="split-grid">
+    <article class="panel">
+        <div class="panel-header">
+            <div>
+                <h3>Follow-ups</h3>
+                <p>Scheduled next steps for this lead.</p>
+            </div>
+            <a class="btn btn-ghost" href="{% url 'add_followup' lead.pk %}">Add</a>
+        </div>
+        <div class="panel-body">
+            {% if followups %}
+            <div class="timeline">
+                {% for followup in followups %}
+                <div class="timeline-item">
+                    <strong>{{ followup.followup_date|date:"M d, Y h:i A" }}</strong>
+                    <span class="badge status-{{ followup.status }}">{{ followup.get_status_display }}</span>
+                    <p class="muted">{{ followup.note|linebreaksbr }}</p>
+                    {% if followup.status == 'pending' %}
+                    <a class="btn btn-soft" href="{% url 'complete_followup' followup.pk %}" data-confirm="Mark this follow-up as completed?">
+                        <i data-lucide="check"></i>
+                        <span>Complete</span>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i data-lucide="calendar-clock"></i>
+                <h3>No follow-ups</h3>
+                <p>Schedule a follow-up to keep the conversation moving.</p>
+            </div>
+            {% endif %}
+        </div>
+    </article>
+
+    <article class="panel">
+        <div class="panel-header">
+            <div>
+                <h3>Lead notes</h3>
+                <p>Chronological internal observations.</p>
+            </div>
+            <a class="btn btn-ghost" href="{% url 'add_lead_note' lead.pk %}">Add</a>
+        </div>
+        <div class="panel-body">
+            {% if notes %}
+            <div class="timeline">
+                {% for note in notes %}
+                <div class="timeline-item">
+                    <strong>{{ note.created_by|default:"CRM" }} . {{ note.created_at|date:"M d, Y h:i A" }}</strong>
+                    <p class="muted">{{ note.note|linebreaksbr }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i data-lucide="sticky-note"></i>
+                <h3>No notes</h3>
+                <p>Add context for the team before the next call or proposal.</p>
+            </div>
+            {% endif %}
+        </div>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h3>Communications</h3>
+            <p>Calls, emails, WhatsApp messages, and meeting records.</p>
+        </div>
+        <a class="btn btn-ghost" href="{% url 'add_communication' lead.pk %}">Add</a>
+    </div>
+    <div class="table-wrap">
+        <table class="crm-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Message</th>
+                    <th>Logged by</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in communications %}
+                <tr>
+                    <td><span class="badge">{{ item.get_communication_type_display }}</span></td>
+                    <td>{{ item.message|linebreaksbr }}</td>
+                    <td>{{ item.created_by|default:"CRM" }}</td>
+                    <td>{{ item.created_at|date:"M d, Y h:i A" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">
+                        <div class="empty-state">
+                            <i data-lucide="messages-square"></i>
+                            <h3>No communications logged</h3>
+                            <p>Log the next call, meeting, email, or WhatsApp update here.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'crm/base/base.html' %}
+
+{% block title %}Add Note | InkaGROWTH CRM{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-kicker">Lead note</p>
+        <h2>Add note for {{ lead.name }}</h2>
+        <p>Keep the team aligned with a clear internal update.</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-secondary" href="{% url 'lead_detail' lead.pk %}">
+            <i data-lucide="arrow-left"></i>
+            <span>Back</span>
+        </a>
+    </div>
+</section>
+
+<form class="form-card" method="post">
+    {% csrf_token %}
+    <div class="form-grid">
+        <div class="form-field full">
+            <label for="note">Note</label>
+            <textarea id="note" name="note" placeholder="Add context, objection, pricing discussion, or next-step detail" required></textarea>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a class="btn btn-secondary" href="{% url 'lead_detail' lead.pk %}">Cancel</a>
+        <button class="btn btn-primary" type="submit">
+            <i data-lucide="save"></i>
+            <span>Save Note</span>
+        </button>
+    </div>
+</form>
+{% endblock %}

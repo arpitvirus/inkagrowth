@@ -1,0 +1,67 @@
+<aside class="sidebar" aria-label="CRM navigation">
+    <div class="sidebar-header">
+        <a class="brand" href="{% url 'dashboard' %}">
+            <span class="brand-mark">IG</span>
+            <span>
+                <strong>InkaGROWTH</strong>
+                <small>Agency CRM</small>
+            </span>
+        </a>
+        <button class="sidebar-close" type="button" data-sidebar-close aria-label="Close sidebar">
+            <i data-lucide="x"></i>
+        </button>
+    </div>
+
+    <nav class="sidebar-nav">
+        <span class="nav-label">Workspace</span>
+
+        <a class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}is-active{% endif %}" href="{% url 'dashboard' %}">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a class="sidebar-link {% if request.resolver_match.url_name == 'lead_list' or request.resolver_match.url_name == 'add_lead' or request.resolver_match.url_name == 'lead_detail' or request.resolver_match.url_name == 'edit_lead' or request.resolver_match.url_name == 'add_followup' or request.resolver_match.url_name == 'add_lead_note' or request.resolver_match.url_name == 'add_communication' %}is-active{% endif %}" href="{% url 'lead_list' %}">
+            <i data-lucide="target"></i>
+            <span>Leads</span>
+        </a>
+
+        <a class="sidebar-link {% if request.resolver_match.url_name == 'client_list' or request.resolver_match.url_name == 'add_client' or request.resolver_match.url_name == 'client_detail' or request.resolver_match.url_name == 'edit_client' or request.resolver_match.url_name == 'upload_client_file' %}is-active{% endif %}" href="{% url 'client_list' %}">
+            <i data-lucide="briefcase-business"></i>
+            <span>Clients</span>
+        </a>
+
+        <a class="sidebar-link {% if request.resolver_match.url_name == 'task_list' or request.resolver_match.url_name == 'add_task' or request.resolver_match.url_name == 'edit_task' %}is-active{% endif %}" href="{% url 'task_list' %}">
+            <i data-lucide="list-checks"></i>
+            <span>Tasks</span>
+        </a>
+
+        <a class="sidebar-link {% if request.resolver_match.url_name == 'payment_list' or request.resolver_match.url_name == 'add_payment' %}is-active{% endif %}" href="{% url 'payment_list' %}">
+            <i data-lucide="indian-rupee"></i>
+            <span>Payments</span>
+        </a>
+
+        <a class="sidebar-link {% if request.resolver_match.url_name == 'service_list' or request.resolver_match.url_name == 'add_service' %}is-active{% endif %}" href="{% url 'service_list' %}">
+            <i data-lucide="package-check"></i>
+            <span>Services</span>
+        </a>
+
+        <a class="sidebar-link {% if request.resolver_match.url_name == 'activity_logs' %}is-active{% endif %}" href="{% url 'activity_logs' %}">
+            <i data-lucide="history"></i>
+            <span>Activity Logs</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="user-chip">
+            <span class="avatar">{{ request.user.username|first|upper }}</span>
+            <span>
+                <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+                <small>{{ request.user.email|default:"Team member" }}</small>
+            </span>
+        </div>
+        <a class="sidebar-link sidebar-logout" href="{% url 'logout' %}">
+            <i data-lucide="log-out"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+</aside>

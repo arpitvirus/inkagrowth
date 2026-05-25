@@ -1,0 +1,96 @@
+{% extends 'crm/base/base.html' %}
+
+{% block title %}Add Client | InkaGROWTH CRM{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-kicker">Accounts</p>
+        <h2>Add client</h2>
+        <p>Create a client account with service, billing, renewal, and contact details.</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-secondary" href="{% url 'client_list' %}">
+            <i data-lucide="arrow-left"></i>
+            <span>Back</span>
+        </a>
+    </div>
+</section>
+
+<form class="form-card" method="post">
+    {% csrf_token %}
+    <div class="form-grid">
+        <div class="form-field">
+            <label for="name">Client name</label>
+            <input id="name" name="name" type="text" placeholder="Primary contact name" required>
+        </div>
+
+        <div class="form-field">
+            <label for="company_name">Company</label>
+            <input id="company_name" name="company_name" type="text" placeholder="Business or brand name">
+        </div>
+
+        <div class="form-field">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" placeholder="+91 98765 43210" required>
+        </div>
+
+        <div class="form-field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="name@example.com">
+        </div>
+
+        <div class="form-field">
+            <label for="website">Website</label>
+            <input id="website" name="website" type="url" placeholder="https://example.com">
+        </div>
+
+        <div class="form-field">
+            <label for="service">Service</label>
+            <select id="service" name="service">
+                <option value="">Select a service</option>
+                {% for service in services %}
+                <option value="{{ service.id }}">{{ service.name }} - Rs. {{ service.price|floatformat:2 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label for="monthly_charges">Monthly charges</label>
+            <input id="monthly_charges" name="monthly_charges" type="number" min="0" step="0.01" placeholder="Retainer amount">
+        </div>
+
+        <div class="form-field">
+            <label for="renewal_date">Renewal date</label>
+            <input id="renewal_date" name="renewal_date" type="date">
+        </div>
+
+        <div class="form-field full">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                {% for value, label in status_choices %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field full">
+            <label for="address">Address</label>
+            <textarea id="address" name="address" placeholder="Billing or office address"></textarea>
+        </div>
+
+        <div class="form-field full">
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes" placeholder="Contract scope, reporting cadence, or account context"></textarea>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a class="btn btn-secondary" href="{% url 'client_list' %}">Cancel</a>
+        <button class="btn btn-primary" type="submit">
+            <i data-lucide="save"></i>
+            <span>Save Client</span>
+        </button>
+    </div>
+</form>
+{% endblock %}

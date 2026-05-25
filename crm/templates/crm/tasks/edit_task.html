@@ -1,0 +1,85 @@
+{% extends 'crm/base/base.html' %}
+
+{% block title %}Edit Task | InkaGROWTH CRM{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-kicker">Execution</p>
+        <h2>Edit task</h2>
+        <p>Update the owner, priority, status, due date, or delivery details.</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-secondary" href="{% url 'task_list' %}">
+            <i data-lucide="arrow-left"></i>
+            <span>Back</span>
+        </a>
+    </div>
+</section>
+
+<form class="form-card" method="post">
+    {% csrf_token %}
+    <div class="form-grid">
+        <div class="form-field full">
+            <label for="title">Task title</label>
+            <input id="title" name="title" type="text" value="{{ task.title }}" required>
+        </div>
+
+        <div class="form-field">
+            <label for="assigned_to">Assigned to</label>
+            <select id="assigned_to" name="assigned_to">
+                <option value="">Unassigned</option>
+                {% for user in users %}
+                <option value="{{ user.id }}" {% if task.assigned_to_id == user.id %}selected{% endif %}>{{ user.get_full_name|default:user.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label for="related_client">Related client</label>
+            <select id="related_client" name="related_client">
+                <option value="">No client</option>
+                {% for client in clients %}
+                <option value="{{ client.id }}" {% if task.related_client_id == client.id %}selected{% endif %}>{{ client.name }}{% if client.company_name %} - {{ client.company_name }}{% endif %}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label for="due_date">Due date</label>
+            <input id="due_date" name="due_date" type="date" value="{{ task.due_date|date:'Y-m-d' }}">
+        </div>
+
+        <div class="form-field">
+            <label for="priority">Priority</label>
+            <select id="priority" name="priority">
+                {% for value, label in priority_choices %}
+                <option value="{{ value }}" {% if task.priority == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if task.status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field full">
+            <label for="description">Description</label>
+            <textarea id="description" name="description">{{ task.description|default:'' }}</textarea>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a class="btn btn-secondary" href="{% url 'task_list' %}">Cancel</a>
+        <button class="btn btn-primary" type="submit">
+            <i data-lucide="save"></i>
+            <span>Update Task</span>
+        </button>
+    </div>
+</form>
+{% endblock %}

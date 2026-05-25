@@ -1,0 +1,43 @@
+{% extends 'crm/base/base.html' %}
+
+{% block title %}Upload File | InkaGROWTH CRM{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-kicker">Client files</p>
+        <h2>Upload file for {{ client.name }}</h2>
+        <p>Add a contract, invoice, report, creative, or account document.</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-secondary" href="{% url 'client_detail' client.pk %}">
+            <i data-lucide="arrow-left"></i>
+            <span>Back</span>
+        </a>
+    </div>
+</section>
+
+<form class="form-card" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-grid">
+        <div class="form-field full">
+            <label for="title">File title</label>
+            <input id="title" name="title" type="text" placeholder="Example: Signed SEO retainer" required>
+        </div>
+
+        <div class="form-field full">
+            <label for="file">File</label>
+            <input id="file" name="file" type="file" required>
+            <span class="field-help">Upload documents, images, PDFs, or other client assets.</span>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a class="btn btn-secondary" href="{% url 'client_detail' client.pk %}">Cancel</a>
+        <button class="btn btn-primary" type="submit">
+            <i data-lucide="upload"></i>
+            <span>Upload File</span>
+        </button>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,201 @@
+{% extends 'crm/base/base.html' %}
+
+{% block title %}Dashboard | InkaGROWTH CRM{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-kicker">Overview</p>
+        <h2>Agency dashboard</h2>
+        <p>Track lead pipeline health, client load, task momentum, follow-ups, and paid revenue from one focused workspace.</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-secondary" href="{% url 'add_task' %}">
+            <i data-lucide="plus"></i>
+            <span>Task</span>
+        </a>
+        <a class="btn btn-primary" href="{% url 'add_lead' %}">
+            <i data-lucide="user-plus"></i>
+            <span>Add Lead</span>
+        </a>
+    </div>
+</section>
+
+<section class="stats-grid" aria-label="CRM analytics">
+    <article class="metric-card">
+        <span class="metric-icon"><i data-lucide="target"></i></span>
+        <div>
+            <p>Total Leads</p>
+            <strong>{{ total_leads }}</strong>
+            <span class="meta-text">{{ pending_followups }} pending follow-ups</span>
+        </div>
+    </article>
+
+    <article class="metric-card">
+        <span class="metric-icon green"><i data-lucide="briefcase-business"></i></span>
+        <div>
+            <p>Total Clients</p>
+            <strong>{{ total_clients }}</strong>
+            <span class="meta-text">Active accounts in CRM</span>
+        </div>
+    </article>
+
+    <article class="metric-card">
+        <span class="metric-icon amber"><i data-lucide="list-checks"></i></span>
+        <div>
+            <p>Total Tasks</p>
+            <strong>{{ total_tasks }}</strong>
+            <span class="meta-text">{{ completed_tasks }} completed</span>
+        </div>
+    </article>
+
+    <article class="metric-card">
+        <span class="metric-icon rose"><i data-lucide="indian-rupee"></i></span>
+        <div>
+            <p>Total Revenue</p>
+            <strong>Rs. {{ total_revenue|floatformat:2 }}</strong>
+            <span class="meta-text">Paid payment records</span>
+        </div>
+    </article>
+</section>
+
+{{ chart_data|json_script:"dashboard-chart-data" }}
+<section class="dashboard-charts">
+    <article class="panel chart-box">
+        <div class="panel-header">
+            <div>
+                <h3>Lead status mix</h3>
+                <p>Distribution across the active pipeline.</p>
+            </div>
+        </div>
+        <div class="panel-body">
+            <canvas id="leadStatusChart" aria-label="Lead status chart"></canvas>
+        </div>
+    </article>
+
+    <article class="panel chart-box">
+        <div class="panel-header">
+            <div>
+                <h3>Task progress</h3>
+                <p>Current execution workload by status.</p>
+            </div>
+        </div>
+        <div class="panel-body">
+            <canvas id="taskStatusChart" aria-label="Task status chart"></canvas>
+        </div>
+    </article>
+</section>
+
+<section class="content-grid">
+    <article class="panel">
+        <div class="panel-header">
+            <div>
+                <h3>Recent leads</h3>
+                <p>Newest opportunities added to the CRM.</p>
+            </div>
+            <a class="btn btn-ghost" href="{% url 'lead_list' %}">View all</a>
+        </div>
+        <div class="panel-body">
+            {% if recent_leads %}
+            <div class="quick-list">
+                {% for lead in recent_leads %}
+                <a class="quick-list-item" href="{% url 'lead_detail' lead.pk %}">
+                    <span>
+                        <strong>{{ lead.name }}</strong>
+                        <small>{{ lead.company_name|default:"No company" }}{% if lead.phone %} . {{ lead.phone }}{% endif %}</small>
+                    </span>
+                    <span class="badge status-{{ lead.status }}">{{ lead.get_status_display }}</span>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i data-lucide="target"></i>
+                <h3>No leads yet</h3>
+                <p>Add your first lead to start building the agency pipeline.</p>
+                <a class="btn btn-primary" href="{% url 'add_lead' %}">Add Lead</a>
+            </div>
+            {% endif %}
+        </div>
+    </article>
+
+    <article class="panel">
+        <div class="panel-header">
+            <div>
+                <h3>Upcoming follow-ups</h3>
+                <p>Pending conversations ordered by date.</p>
+            </div>
+        </div>
+        <div class="panel-body">
+            {% if upcoming_followups %}
+            <div class="quick-list">
+                {% for followup in upcoming_followups %}
+                <a class="quick-list-item" href="{% url 'lead_detail' followup.lead.pk %}">
+                    <span>
+                        <strong>{{ followup.lead.name }}</strong>
+                        <small>{{ followup.followup_date|date:"M d, Y h:i A" }}</small>
+                    </span>
+                    <span class="badge status-{{ followup.status }}">{{ followup.get_status_display }}</span>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i data-lucide="calendar-clock"></i>
+                <h3>No pending follow-ups</h3>
+                <p>Follow-ups added on lead detail pages will appear here.</p>
+            </div>
+            {% endif %}
+        </div>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h3>Recent tasks</h3>
+            <p>Latest internal work items created by the team.</p>
+        </div>
+        <a class="btn btn-ghost" href="{% url 'task_list' %}">View all</a>
+    </div>
+    <div class="table-wrap">
+        <table class="crm-table">
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>Assigned</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Due</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in recent_tasks %}
+                <tr>
+                    <td>
+                        <span class="table-title">
+                            <strong>{{ task.title }}</strong>
+                            <small>{{ task.related_client.name|default:"No client linked" }}</small>
+                        </span>
+                    </td>
+                    <td>{{ task.assigned_to|default:"Unassigned" }}</td>
+                    <td><span class="badge status-{{ task.priority }}">{{ task.get_priority_display }}</span></td>
+                    <td><span class="badge status-{{ task.status }}">{{ task.get_status_display }}</span></td>
+                    <td>{{ task.due_date|date:"M d, Y"|default:"No date" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i data-lucide="list-checks"></i>
+                            <h3>No tasks yet</h3>
+                            <p>Create tasks for onboarding, reporting, campaigns, and follow-ups.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

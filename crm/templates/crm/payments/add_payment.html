@@ -1,0 +1,61 @@
+{% extends 'crm/base/base.html' %}
+
+{% block title %}Add Payment | InkaGROWTH CRM{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-kicker">Payments</p>
+        <h2>Add payment</h2>
+        <p>Record a payment for {{ client.name }} and keep renewal visibility current.</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-secondary" href="{% url 'client_detail' client.pk %}">
+            <i data-lucide="arrow-left"></i>
+            <span>Back</span>
+        </a>
+    </div>
+</section>
+
+<form class="form-card" method="post">
+    {% csrf_token %}
+    <div class="form-grid">
+        <div class="form-field">
+            <label for="amount">Amount</label>
+            <input id="amount" name="amount" type="number" min="0" step="0.01" placeholder="Payment amount" required>
+        </div>
+
+        <div class="form-field">
+            <label for="payment_status">Status</label>
+            <select id="payment_status" name="payment_status">
+                {% for value, label in payment_status_choices %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label for="payment_date">Payment date</label>
+            <input id="payment_date" name="payment_date" type="date" required>
+        </div>
+
+        <div class="form-field">
+            <label for="next_payment_date">Next payment date</label>
+            <input id="next_payment_date" name="next_payment_date" type="date">
+        </div>
+
+        <div class="form-field full">
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes" placeholder="Invoice number, payment mode, or billing comments"></textarea>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a class="btn btn-secondary" href="{% url 'client_detail' client.pk %}">Cancel</a>
+        <button class="btn btn-primary" type="submit">
+            <i data-lucide="save"></i>
+            <span>Save Payment</span>
+        </button>
+    </div>
+</form>
+{% endblock %}

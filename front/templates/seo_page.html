@@ -1,0 +1,1778 @@
+{% load static %}
+<!DOCTYPE html>
+<!--
+  ============================================================
+  InkaGrowth — Programmatic SEO Landing Page Template
+  ============================================================
+  DYNAMIC VARIABLES (replace before publish):
+    {{service}}           → e.g. "Digital Marketing"
+    {{city}}              → e.g. "Chandausi"
+    {{state}}             → e.g. "Uttar Pradesh"
+    {{slug}}              → e.g. "digital-marketing-in-chandausi"
+    {{meta_title}}        → e.g. "Digital Marketing in Chandausi | inkaGROWTH"
+    {{meta_description}}  → e.g. "Best digital marketing agency in Chandausi..."
+    {{primary_keyword}}   → e.g. "digital marketing in Chandausi"
+    {{service_icon}}      → Font Awesome class e.g. "fas fa-chart-line"
+    {{h1}}                → Full H1 string
+    {{hero_subheadline}}  → Subheadline below H1
+    {{intro_para_1}}      → First paragraph (must contain primary keyword in first 100 words)
+    {{intro_para_2}}      → Second intro paragraph
+    {{nearby_areas}}      → JSON array of nearby city names
+    {{faqs}}              → JSON array of {q, a} objects
+    {{service_features}}  → JSON array of {icon, title, desc} objects
+  ============================================================
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <!-- ✅ SEO: Focus keyword at beginning of title -->
+    <title>{{meta_title}}</title>
+
+    <!-- ✅ SEO: Focus keyword in meta description -->
+    <meta name="description" content="{{meta_description}}">
+    <meta name="keywords"
+        content="{{primary_keyword}}, best {{service}} in {{city}}, affordable {{service}} {{city}}, top {{service}} company {{city}}, professional {{service}} services {{city}}, {{service}} agency {{state}}">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="inkaGROWTH">
+
+    <!-- ✅ Canonical URL -->
+    <link rel="canonical" href="https://inkagrowth.com/{{slug}}">
+    <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}">
+
+    <!-- ✅ Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{meta_title}}">
+    <meta property="og:description" content="{{meta_description}}">
+    <meta property="og:url" content="https://inkagrowth.com/{{slug}}">
+    <meta property="og:image" content="https://inkagrowth.com/static/img/og-{{slug}}.jpg">
+    <meta property="og:image:alt" content="{{service}} in {{city}}">
+    <meta property="og:site_name" content="inkaGROWTH">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- ✅ Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{meta_title}}">
+    <meta name="twitter:description" content="{{meta_description}}">
+    <meta name="twitter:image" content="https://inkagrowth.com/static/img/og-{{slug}}.jpg">
+    <meta name="twitter:image:alt" content="{{service}} in {{city}}">
+
+    <!-- Google Fonts + Font Awesome 6 — identical to homepage -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- ================================================================
+       DESIGN SYSTEM — 100% identical to homepage (do NOT change)
+       ================================================================ -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #111111;
+            scroll-behavior: smooth;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        :root {
+            --black: #111111;
+            --white: #ffffff;
+            --red: #d43c32;
+            --red-dark: #b22f26;
+            --red-light: rgba(212, 60, 50, 0.08);
+            --gray-light: #f5f5f7;
+            --gray-border: #e9e9ef;
+            --shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.02), 0 2px 6px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 20px 35px -12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 30px 40px -18px rgba(0, 0, 0, 0.2);
+            --transition-smooth: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        section {
+            padding: 96px 0;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        h1 {
+            font-size: 3.8rem;
+            line-height: 1.2;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .section-subhead {
+            font-size: 1.2rem;
+            color: #555;
+            max-width: 600px;
+            margin-bottom: 48px;
+            font-weight: 400;
+        }
+
+        /* ---- Buttons ---- */
+        .btn-primary {
+            display: inline-block;
+            background-color: var(--red);
+            color: white;
+            font-weight: 600;
+            padding: 14px 32px;
+            border-radius: 40px;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(212, 60, 50, 0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--red-dark);
+            transform: scale(1.02);
+            box-shadow: 0 12px 24px rgba(212, 60, 50, 0.3);
+        }
+
+        .btn-ghost {
+            display: inline-block;
+            background: transparent;
+            color: var(--black);
+            font-weight: 600;
+            padding: 13px 30px;
+            border-radius: 40px;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            border: 2px solid var(--gray-border);
+            font-size: 1rem;
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--red);
+            color: var(--red);
+            transform: scale(1.02);
+        }
+
+        /* ---- Navbar (identical to homepage) ---- */
+        .navbar {
+            position: sticky;
+            top: 0;
+            background-color: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--gray-border);
+            padding: 18px 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 1.8rem;
+            letter-spacing: -0.02em;
+            color: var(--black);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--black);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--red);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--black);
+            transition: color 0.2s;
+        }
+
+        .menu-toggle:hover {
+            color: var(--red);
+        }
+
+        /* ---- Cards (identical to homepage) ---- */
+        .service-card,
+        .testimonial-card {
+            background: var(--white);
+            border-radius: 28px;
+            padding: 32px 24px;
+            transition: var(--transition-smooth);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-border);
+        }
+
+        .service-card:hover,
+        .testimonial-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(212, 60, 50, 0.2);
+        }
+
+        .services-grid,
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 32px;
+        }
+
+        .icon-red {
+            font-size: 2.5rem;
+            color: var(--red);
+            margin-bottom: 20px;
+        }
+
+        /* ---- Why Choose cards ---- */
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 28px;
+        }
+
+        .why-card {
+            background: var(--gray-light);
+            border-radius: 20px;
+            padding: 28px 24px;
+            border: 1px solid var(--gray-border);
+            transition: var(--transition-smooth);
+        }
+
+        .why-card:hover {
+            background: white;
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(212, 60, 50, 0.2);
+        }
+
+        /* ---- Stats ---- */
+        .stats-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            flex-wrap: wrap;
+            text-align: center;
+        }
+
+        .stat-item {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--red);
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        /* ---- Local areas ---- */
+        .areas-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .area-pill {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 40px;
+            background: var(--red-light);
+            color: var(--red);
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid rgba(212, 60, 50, 0.15);
+            text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+
+        .area-pill:hover {
+            background: var(--red);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* ---- Breadcrumb ---- */
+        .breadcrumb {
+            padding: 14px 0 0;
+            font-size: 0.88rem;
+            color: #888;
+        }
+
+        .breadcrumb a {
+            color: #888;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--red);
+        }
+
+        .breadcrumb span {
+            margin: 0 6px;
+        }
+
+        /* ---- FAQ ---- */
+        .faq-list {
+            max-width: 840px;
+        }
+
+        .faq-item {
+            border: 1px solid var(--gray-border);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .faq-item:hover {
+            border-color: rgba(212, 60, 50, 0.25);
+        }
+
+        .faq-question {
+            width: 100%;
+            background: none;
+            border: none;
+            text-align: left;
+            padding: 22px 24px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--black);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .faq-question .faq-icon {
+            font-size: 1.2rem;
+            color: var(--red);
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+            padding: 0 24px;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 400px;
+            padding: 0 24px 22px;
+        }
+
+        .faq-answer p {
+            color: #4a4a4a;
+            line-height: 1.7;
+        }
+
+        /* ---- About / Split layout ---- */
+        .about-grid {
+            display: flex;
+            gap: 60px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .about-img {
+            flex: 1;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .about-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        /* ---- Form section (identical to homepage) ---- */
+        .form-section {
+            background: linear-gradient(135deg, #ffffff 0%, #fffcfc 100%);
+            border-radius: 20px;
+            padding: 50px 56px;
+            border: 1px solid rgba(163, 161, 161, 0.12);
+            box-shadow: 0 25px 45px -12px rgba(20, 19, 19, 0.06);
+        }
+
+        .form-grid {
+            display: flex;
+            gap: 60px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .form-content {
+            flex: 1.2;
+        }
+
+        .form-image {
+            flex: 0.9;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .form-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--gray-border);
+            border-radius: 20px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition-smooth);
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(212, 60, 50, 0.08);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            background-color: var(--red);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--red-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(212, 60, 50, 0.2);
+        }
+
+        /* ---- Client logos strip ---- */
+        .clients-strip {
+            margin: 10px 0 10px;
+            text-align: center;
+        }
+
+        .client-logos {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 52px;
+            margin-top: 40px;
+        }
+
+        .client-logos img {
+            height: 40px;
+            width: auto;
+        }
+
+        /* ---- Footer (identical to homepage) ---- */
+        footer {
+            border-top: 1px solid var(--gray-border);
+            padding: 48px 0 32px;
+            background: white;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .social-links a {
+            color: var(--black);
+            font-size: 1.4rem;
+            margin-left: 24px;
+            transition: color 0.2s;
+        }
+
+        .social-links a:hover {
+            color: var(--red);
+        }
+
+        /* ---- WhatsApp float ---- */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background-color: #25D366;
+            width: 56px;
+            height: 56px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transition: 0.2s;
+            z-index: 1100;
+        }
+
+        .whatsapp-float a {
+            color: white;
+            font-size: 2rem;
+        }
+
+
+        .whatsapp-float:hover {
+            transform: scale(1.07);
+            background-color: #128C7E;
+        }
+
+        /* ---- Scroll Animations (identical to homepage) ---- */
+        .fade-up,
+        .slide-left,
+        .slide-right,
+        .stagger-item {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        .slide-left {
+            transform: translateX(-40px);
+        }
+
+        .slide-right {
+            transform: translateX(40px);
+        }
+
+        .visible {
+            opacity: 1 !important;
+            transform: translateX(0) translateY(0) !important;
+        }
+
+        .stagger-container .stagger-item {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .stagger-container.reveal-stagger .stagger-item {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stagger-container.reveal-stagger .stagger-item:nth-child(1) {
+            transition-delay: 0.05s;
+        }
+
+        .stagger-container.reveal-stagger .stagger-item:nth-child(2) {
+            transition-delay: 0.2s;
+        }
+
+        .stagger-container.reveal-stagger .stagger-item:nth-child(3) {
+            transition-delay: 0.35s;
+        }
+
+        .stagger-container.reveal-stagger .stagger-item:nth-child(4) {
+            transition-delay: 0.5s;
+        }
+
+        .stagger-container.reveal-stagger .stagger-item:nth-child(5) {
+            transition-delay: 0.65s;
+        }
+
+        /* ---- Hero (identical to homepage) ---- */
+        .hero {
+            padding: 80px 0 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-grid {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+            flex-wrap: wrap;
+        }
+
+        .hero-content {
+            flex: 1.2;
+        }
+
+        .hero-visual {
+            flex: 0.9;
+        }
+
+        .growth-svg {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .hero-bg-motion {
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 80%;
+            height: 120%;
+            background: radial-gradient(circle at 30% 50%, rgba(212, 60, 50, 0.02) 0%, rgba(255, 255, 255, 0) 70%);
+            pointer-events: none;
+            animation: slowDrift 18s infinite alternate ease-in-out;
+            z-index: 0;
+        }
+
+        @keyframes slowDrift {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.4;
+            }
+
+            100% {
+                transform: translate(4%, 2%) scale(1.05);
+                opacity: 0.7;
+            }
+        }
+
+        .growth-line {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 800;
+            animation: drawLine 1.6s ease-out forwards;
+        }
+
+        @keyframes drawLine {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .data-point {
+            transform-origin: center;
+            animation: gentlePulse 2.2s infinite ease-in-out;
+        }
+
+        @keyframes gentlePulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.9;
+            }
+
+            50% {
+                transform: scale(1.18);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0.9;
+            }
+        }
+
+        .bar-growth {
+            transform-origin: bottom;
+            animation: barRise 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+            transform: scaleY(0);
+        }
+
+        @keyframes barRise {
+            to {
+                transform: scaleY(1);
+            }
+        }
+
+        .arrow-move {
+            animation: arrowBounce 1.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes arrowBounce {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(5px, -5px);
+            }
+        }
+
+        .hero-visual svg {
+            opacity: 0;
+            animation: svgFadeIn 0.5s ease 0.2s forwards;
+        }
+
+        @keyframes svgFadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .glow-text {
+            color: var(--red);
+        }
+
+        /* ---- Inline link style ---- */
+        .inline-link {
+            color: var(--red);
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(212, 60, 50, 0.3);
+            transition: border-color 0.2s;
+        }
+
+        .inline-link:hover {
+            border-color: var(--red);
+        }
+
+        /* ---- Tag/badge ---- */
+        .tag {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 40px;
+            background: var(--red-light);
+            color: var(--red);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            border: 1px solid rgba(212, 60, 50, 0.15);
+        }
+
+        /* ---- Section alt background ---- */
+        .section-alt {
+            background: var(--gray-light);
+        }
+
+        /* ===================== Responsive ===================== */
+        @media (max-width: 900px) {
+            .container {
+                padding: 0 24px;
+            }
+
+            h1 {
+                font-size: 2.8rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            section {
+                padding: 64px 0;
+            }
+
+            .about-grid {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                justify-content: center;
+            }
+
+            .form-section {
+                padding: 48px 28px;
+            }
+
+            .form-grid {
+                flex-direction: column;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                gap: 20px;
+                padding: 20px 0 10px;
+                background-color: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(8px);
+                border-radius: 24px;
+                margin-top: 10px;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .hero-grid {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-content {
+                text-align: center;
+            }
+
+            .btn-primary {
+                margin-top: 8px;
+            }
+
+            .client-logos {
+                gap: 24px;
+            }
+
+            .areas-flex {
+                justify-content: center;
+            }
+        }
+
+        .popup-message {
+
+            position: fixed;
+
+            top: 30px;
+
+            right: 30px;
+
+            background: #16a34a;
+
+            color: white;
+
+            padding: 16px 24px;
+
+            border-radius: 12px;
+
+            z-index: 99999;
+
+            font-size: 16px;
+
+            font-weight: 600;
+
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+
+            animation: popupFade 0.5s ease;
+        }
+
+        @keyframes popupFade {
+
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+    <!-- ✅ JSON-LD Schema Markup -->
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://inkagrowth.com/#organization",
+        "name": "inkaGROWTH",
+        "url": "https://inkagrowth.com",
+        "logo": "https://inkagrowth.com/static/img/inka_logo_transparent.png",
+        "image": "https://inkagrowth.com/static/img/og-{{slug}}.jpg",
+        "description": "{{meta_description}}",
+        "telephone": "+91-9389826074",
+        "email": "info@inkagrowth.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "{{city}}",
+          "addressLocality": "{{city}}",
+          "addressRegion": "{{state}}",
+          "addressCountry": "IN"
+        },
+        "areaServed": {
+          "@type": "State",
+          "name": "{{state}}"
+        },
+        "serviceType": "{{service}}",
+        "priceRange": "₹₹",
+        "sameAs": [
+          "https://www.instagram.com/inkagrowth/",
+          "https://www.facebook.com/profile.php?id=61574394691962",
+          "https://www.linkedin.com/company/113341291/"
+        ]
+      },
+      {
+        "@type": "Service",
+        "serviceType": "{{service}}",
+        "provider": { "@id": "https://inkagrowth.com/#organization" },
+        "areaServed": {
+          "@type": "City",
+          "name": "{{city}}"
+        },
+        "name": "{{service}} in {{city}}",
+        "description": "Professional {{service}} services for businesses in {{city}}, {{state}}. ROI-focused strategies, local SEO, and custom campaigns."
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://inkagrowth.com"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Services",
+            "item": "https://inkagrowth.com/services"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "{{service}} in {{city}}",
+            "item": "https://inkagrowth.com/{{slug}}"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Why should businesses in {{city}} invest in {{service}}?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Businesses in {{city}} need {{service}} to stay competitive online. With more consumers searching locally, a strong digital presence ensures your brand reaches the right audience at the right time — driving more leads, more calls, and more revenue."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How much does {{service}} cost in {{city}}?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The cost of {{service}} in {{city}} depends on your business goals, competition, and the scope of work. inkaGROWTH offers affordable monthly packages starting from a budget-friendly entry point with transparent, no-hidden-fee pricing. Contact us for a free quote."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How long does it take to see results from {{service}} in {{city}}?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "For SEO-based services, businesses typically see measurable improvements within 3–6 months. Paid advertising and social media campaigns can deliver results much faster — often within the first few weeks. We provide transparent monthly reporting so you always know what's happening."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does inkaGROWTH serve businesses outside {{city}}?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. While we specialise in {{service}} for businesses in {{city}}, we also serve clients across {{state}} including Moradabad, Sambhal, Badaun, and Bhajoi. Our team works remotely and delivers premium results regardless of location."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What makes inkaGROWTH different from other {{service}} agencies in {{city}}?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Unlike generic agencies, inkaGROWTH combines data-driven strategies with bold creative. We focus on measurable ROI, provide dedicated support, and customise every campaign for your specific market. Our clients have seen average ROI increases of 315% within 6 months."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+
+    <!-- ================================================
+       NAVBAR — Identical to homepage
+       ================================================ -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/" class="">
+                <img src="{% static 'img/inka_logo_transparent.png' %}" alt="Inkagrowth Logo"
+                    style="width: 120px; height: 50px">
+            </a>
+            <button class="menu-toggle" id="mobileMenuToggle" aria-label="Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-links" id="navLinks">
+                <a href="#services">Services</a>
+                <a href="/#about">About</a>
+                <a href="#testimonials">Clients</a>
+                <a href="#contact-form">Contact</a>
+                <a href="#stats">Results</a>
+                <a href="https://blog.inkagrowth.com">Blogs</a>
+                <a href="tel:+919389826074" class="btn-primary" style="padding: 10px 24px; font-size: 0.9rem;">Get Free
+                    Quote</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ✅ Breadcrumb (visible) -->
+
+
+    <!-- ================================================
+       HERO — Same animated graph SVG as homepage
+       ================================================ -->
+    <section class="hero" id="hero">
+        <div class="hero-bg-motion"></div>
+        <div class="container hero-grid">
+            <div class="hero-content fade-up">
+                <h1>Grow Your Business with <span class="glow-text">inkaGROWTH</span></h1>
+                <p style="font-size: 1.2rem; color: #3a3a3a; margin-bottom: 32px;">We help brands scale with data-driven
+                    marketing strategies</p>
+                <a href="#contact-form" class="btn-primary">Get Free Consultation <i class="fas fa-arrow-right"
+                        style="margin-left: 8px;"></i></a>
+            </div>
+            <div class="hero-visual fade-up" style="animation-delay: 0.2s;">
+                <svg class="growth-svg" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path class="growth-line" d="M30 230 L80 180 L140 200 L200 120 L270 150 L330 70 L370 40"
+                        stroke="#d43c32" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="6 6" fill="none" />
+                    <path class="growth-line" d="M30 230 L80 180 L140 200 L200 120 L270 150 L330 70 L370 40"
+                        stroke="#111111" stroke-width="2" fill="none" />
+                    <circle class="data-point" cx="80" cy="180" r="6" fill="#d43c32" stroke="white" stroke-width="2" />
+                    <circle class="data-point" cx="200" cy="120" r="6" fill="#d43c32" stroke="white" stroke-width="2" />
+                    <circle class="data-point" cx="330" cy="70" r="6" fill="#d43c32" stroke="white" stroke-width="2" />
+                    <rect class="bar-growth" x="50" y="245" width="50" height="40" fill="#111111" rx="4"
+                        opacity="0.1" />
+                    <rect class="bar-growth" x="130" y="210" width="50" height="75" fill="#d43c32" rx="4"
+                        opacity="0.15" />
+                    <rect class="bar-growth" x="280" y="155" width="50" height="130" fill="#d43c32" rx="4"
+                        opacity="0.3" />
+                    <path class="arrow-move" d="M355 30 L380 30 L380 55" stroke="#d43c32" stroke-width="3"
+                        fill="none" />
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+       SECTION 1 — Introduction
+       ================================================ -->
+    <section id="intro" style="padding-top: 64px; padding-bottom: 64px;">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-img slide-left">
+                    <!-- ✅ ALT text uses focus keyword -->
+                    <img src="{{ image_url }}" alt="{{service}} in {{city}} — inkaGROWTH team" loading="lazy">
+                </div>
+                <div class="about-text slide-right">
+                    <div class="tag">Introduction</div>
+                    <!-- ✅ H2 contains keyword -->
+                    <h2>Why {{city}} Businesses Need {{service}}</h2>
+                    <!-- ✅ Focus keyword in first 100 words, natural use of transition words -->
+                    <p style="font-size: 1.1rem; margin-bottom: 20px; color: #2c2c2e;" id="intro-para-1">
+                        {{intro_para_1}}
+                    </p>
+                    <p style="color: #4a4a4a; margin-bottom: 28px;" id="intro-para-2">
+                        {{intro_para_2}}
+                    </p>
+                    <!-- ✅ Internal links -->
+                    <p style="color: #4a4a4a;">
+                        Whether you are looking for
+                        <a href="/services/seo" class="inline-link">professional SEO services</a>,
+                        a <a href="/services/web-development" class="inline-link">high-converting website</a>,
+                        or a full-scale digital strategy — inkaGROWTH has the expertise to make it happen.
+                        <a href="/contact" class="inline-link">Reach out today</a> and let's build your growth story
+                        together.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+       SECTION 2 — Why Choose inkaGROWTH
+       ================================================ -->
+    <section id="why-choose" class="section-alt">
+        <div class="container">
+            <!-- ✅ H2 with keyword variant -->
+            <h2 class="fade-up">Why Choose inkaGROWTH for {{service}} in {{city}}?</h2>
+            <p class="section-subhead fade-up">
+                We combine data intelligence with bold creative to deliver measurable growth for businesses across
+                {{state}}.
+            </p>
+            <div class="why-grid stagger-container">
+                <div class="why-card stagger-item">
+                    <i class="fas fa-chart-bar icon-red"></i>
+                    <h3>ROI-Focused Strategies</h3>
+                    <p style="color: #555; line-height: 1.7;">
+                        Every campaign we run is built around your bottom line. We track, optimise, and report — because
+                        <strong>results matter more than vanity metrics</strong>. Our clients see an average 315% ROI
+                        increase
+                        within six months.
+                    </p>
+                </div>
+                <div class="why-card stagger-item">
+                    <i class="fas fa-map-marker-alt icon-red"></i>
+                    <h3>Local SEO Expertise</h3>
+                    <p style="color: #555; line-height: 1.7;">
+                        We understand the competitive landscape of {{city}} and {{state}}. Moreover, our local SEO
+                        strategies
+                        are tailored to ensure your business appears at the top when potential customers in {{city}}
+                        search for
+                        your services.
+                    </p>
+                </div>
+                <div class="why-card stagger-item">
+                    <i class="fas fa-headset icon-red"></i>
+                    <h3>Fast, Dedicated Support</h3>
+                    <p style="color: #555; line-height: 1.7;">
+                        We operate on a simple promise: <strong>respond within 24 hours, always</strong>. You get a
+                        dedicated
+                        account manager who knows your business inside out — no tickets, no bots, no delays.
+                    </p>
+                </div>
+                <div class="why-card stagger-item">
+                    <i class="fas fa-sliders-h icon-red"></i>
+                    <h3>Custom Campaigns</h3>
+                    <p style="color: #555; line-height: 1.7;">
+                        Instead of recycled playbooks, we build every strategy from scratch. Additionally, we A/B test
+                        creatives, landing pages, and messaging — so your brand stands out in {{city}}'s market.
+                    </p>
+                </div>
+                <!-- <div class="why-card stagger-item">
+                    <i class="fas fa-file-alt icon-red"></i>
+                    <h3>Transparent Reporting</h3>
+                    <p style="color: #555; line-height: 1.7;">
+                        Furthermore, you always know what you are paying for. We deliver clear monthly performance
+                        reports with
+                        real numbers — traffic, leads, conversions, and revenue impact — no hidden surprises.
+                    </p>
+                </div> -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+       SECTION 3 — Services Included
+       ================================================ -->
+    <section id="services">
+        <div class="container">
+            <!-- ✅ H2 with primary keyword -->
+            <h2 class="fade-up">What's Included in Our {{service}} Package</h2>
+            <p class="section-subhead fade-up">
+                A comprehensive suite of capabilities, tailored specifically for businesses in {{city}}.
+                Therefore, you get everything you need under one roof.
+            </p>
+            <!-- Dynamic service features rendered by JS from {{service_features}} variable -->
+            <div class="services-grid stagger-container" id="service-features-grid">
+                <!-- PLACEHOLDER CARDS — Replace via JS render or server-side templating -->
+                <div class="service-card stagger-item">
+                    <i class="fas fa-search icon-red"></i>
+                    <h3>On-Page Optimisation</h3>
+                    <p>Keyword-rich content, meta tags, header structure, and internal linking tailored for {{city}}
+                        search results.</p>
+                </div>
+                <div class="service-card stagger-item">
+                    <i class="fas fa-cogs icon-red"></i>
+                    <h3>Technical Audit & Fixes</h3>
+                    <p>Site speed, Core Web Vitals, structured data, crawlability — because technical health directly
+                        impacts your rankings.</p>
+                </div>
+                <div class="service-card stagger-item">
+                    <i class="fas fa-map icon-red"></i>
+                    <h3>Local SEO & Google Business</h3>
+                    <p>Optimised Google Business Profile, local citations, and geo-targeted keywords for {{city}} and
+                        nearby areas.</p>
+                </div>
+                <div class="service-card stagger-item">
+                    <i class="fas fa-pen-nib icon-red"></i>
+                    <h3>Content Strategy</h3>
+                    <p>SEO-optimised blog posts, landing pages, and service copy that rank — and convert readers into
+                        customers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+       STATS SECTION — Identical to homepage
+       ================================================ -->
+    <section id="stats" class="section-alt">
+        <div class="container">
+            <h2 class="fade-up" style="text-align: center;">Our Impact Across {{state}}</h2>
+            <p class="section-subhead fade-up" style="text-align: center; margin: 0 auto 48px auto;">
+                Numbers that prove our {{service}} strategies work — not just in {{city}}, but across the region.
+            </p>
+            <div class="stats-grid">
+                <div class="stat-item fade-up">
+                    <div class="stat-number" data-target="380">0</div>
+                    <div class="stat-label">+ Projects Completed</div>
+                </div>
+                <div class="stat-item fade-up" style="transition-delay: 0.15s;">
+                    <div class="stat-number" data-target="98">0</div>
+                    <div class="stat-label">Client Satisfaction (%)</div>
+                </div>
+                <div class="stat-item fade-up" style="transition-delay: 0.3s;">
+                    <div class="stat-number" data-target="315">0</div>
+                    <div class="stat-label">Avg. ROI Increase (%)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+       SECTION 4 — Local SEO Content & Nearby Areas
+       ================================================ -->
+    <section id="local-seo">
+        <div class="container">
+            <div style="max-width: 800px;">
+                <div class="tag fade-up">Serving {{state}}</div>
+                <!-- ✅ H2 with keyword -->
+                <h2 class="fade-up">Serving {{city}} and the Surrounding Region</h2>
+                <p class="fade-up" style="font-size: 1.1rem; color: #4a4a4a; margin-bottom: 24px; line-height: 1.8;">
+                    Our {{service}} services are based in {{state}}, and we know the local market better than anyone.
+                    Meanwhile, businesses in neighbouring towns are also leveraging our expertise to grow online.
+                    Whether you
+                    are searching for the best {{service}} agency in {{city}}, or need digital support across the wider
+                    region,
+                    inkaGROWTH delivers premium results.
+                </p>
+                <p class="fade-up" style="color: #4a4a4a; margin-bottom: 32px; line-height: 1.8;">
+                    However, quality service does not stop at city borders. We actively work with clients from
+                    Moradabad,
+                    Sambhal, Badaun, Bhajoi, and beyond — because every business in {{state}} deserves world-class
+                    <a href="/services/seo" class="inline-link">SEO</a> and
+                    <a href="/services/web-development" class="inline-link">web development</a> support.
+                    Finally, if you want to dominate local search results and outrank your competition, we are ready.
+                </p>
+                <!-- ✅ H3 for internal linking section -->
+                <h3 class="fade-up" style="margin-bottom: 16px;">Areas We Serve in {{state}}</h3>
+                <div class="areas-flex fade-up" id="nearby-areas">
+                    <!-- Dynamically populated via JS / server template from {{nearby_areas}} -->
+                    <a href="/digital-marketing-in-moradabad" class="area-pill">Moradabad</a>
+                    <a href="/seo-services-in-sambhal" class="area-pill">Sambhal</a>
+                    <a href="/website-development-in-bhajoi" class="area-pill">Bhajoi</a>
+                    <a href="/social-media-marketing-in-badaun" class="area-pill">Badaun</a>
+                    <a href="/digital-marketing-in-chandausi" class="area-pill">Chandausi</a>
+                    <a href="/seo-services-in-amroha" class="area-pill">Amroha</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+       TESTIMONIALS — Identical to homepage
+       ================================================ -->
+    <section id="testimonials" class="section-alt">
+        <div class="container">
+            <h2 class="fade-up">Trusted by Fast-Growing Brands</h2>
+            <p class="section-subhead fade-up">What our partners say about the inkaGROWTH experience</p>
+            <div class="testimonials-grid stagger-container">
+                <div class="testimonial-card stagger-item">
+                    <i class="fas fa-star" style="color: #d43c32; margin-bottom: 16px; display: block;"></i>
+                    <p style="font-size: 0.95rem; line-height: 1.5; margin-bottom: 24px;">
+                        "Inkagrowth redefined our digital presence. SEO + content strategy doubled organic traffic in 4
+                        months."
+                    </p>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg"
+                            style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;"
+                            alt="Client testimonial avatar" loading="lazy">
+                        <div><strong>Nina Chen</strong><br><span style="font-size: 0.8rem;">CMO, Vektra Labs</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card stagger-item">
+                    <i class="fas fa-star" style="color: #d43c32; margin-bottom: 16px; display: block;"></i>
+                    <p style="font-size: 0.95rem; line-height: 1.5; margin-bottom: 24px;">
+                        "The paid ads team delivered 5x ROAS within 8 weeks. Their creative strategy stands out."
+                    </p>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg"
+                            style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;"
+                            alt="Client testimonial avatar" loading="lazy">
+                        <div><strong>Marcus Thorne</strong><br><span style="font-size: 0.8rem;">Founder, Studio
+                                Omni</span></div>
+                    </div>
+                </div>
+                <div class="testimonial-card stagger-item">
+                    <i class="fas fa-star" style="color: #d43c32; margin-bottom: 16px; display: block;"></i>
+                    <p style="font-size: 0.95rem; line-height: 1.5; margin-bottom: 24px;">
+                        "The website they built is blazing fast and conversion-focused. Increased leads by 210% in 3
+                        months."
+                    </p>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg"
+                            style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;"
+                            alt="Client testimonial avatar" loading="lazy">
+                        <div><strong>Sophia Ramirez</strong><br><span style="font-size: 0.8rem;">Head of Growth,
+                                Lune</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tool logos strip -->
+    <center>
+        <div class="container clients-strip fade-up">
+            <p style="color: #444242; font-weight: 500;">Tools we use to grow your business</p>
+            <div class="client-logos">
+                <img src="https://cdn.simpleicons.org/meta" alt="Meta Ads" style="height: 40px;">
+                <img src="https://cdn.simpleicons.org/wordpress" alt="WordPress" style="height: 40px;">
+                <img src="https://cdn.simpleicons.org/googleanalytics" alt="Google Analytics" style="height: 40px;">
+                <img src="https://cdn.simpleicons.org/googleads" alt="Google Ads" style="height: 40px;">
+                <img src="https://cdn.simpleicons.org/figma" alt="Figma" style="height: 40px;">
+            </div>
+        </div>
+    </center>
+
+    <!-- ================================================
+       SECTION 5 — FAQ
+       ================================================ -->
+    <section id="faq">
+        <div class="container">
+            <!-- ✅ H2 with keyword -->
+            <h2 class="fade-up">Frequently Asked Questions — {{service}} in {{city}}</h2>
+            <p class="section-subhead fade-up">
+                Everything you need to know before partnering with inkaGROWTH for {{service}} services.
+            </p>
+            <div class="faq-list fade-up" id="faq-list">
+                <!-- FAQ items — populated dynamically from {{faqs}} or use these defaults -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        Why should businesses in {{city}} invest in {{service}}?
+                        <i class="fas fa-plus faq-icon"></i>
+                    </button>
+                    <div class="faq-answer" role="region">
+                        <p>Businesses in {{city}} need {{service}} to stay competitive online. With more consumers
+                            searching
+                            locally, a strong digital presence ensures your brand reaches the right audience at the
+                            right time —
+                            therefore driving more leads, more calls, and more revenue. Additionally, early movers in
+                            {{city}}'s
+                            growing digital market gain a significant long-term competitive advantage.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        How much does {{service}} cost in {{city}}?
+                        <i class="fas fa-plus faq-icon"></i>
+                    </button>
+                    <div class="faq-answer" role="region">
+                        <p>The cost of {{service}} in {{city}} depends on your business goals, competition level, and
+                            scope
+                            of work. However, inkaGROWTH offers affordable monthly packages with transparent,
+                            no-hidden-fee
+                            pricing. We believe every {{city}} business deserves premium marketing — without breaking
+                            the bank.
+                            <a href="/contact" class="inline-link">Contact us</a> for a free personalised quote.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        How long does it take to see results from {{service}} in {{city}}?
+                        <i class="fas fa-plus faq-icon"></i>
+                    </button>
+                    <div class="faq-answer" role="region">
+                        <p>For SEO-based services, businesses typically begin to see measurable improvements within 3–6
+                            months.
+                            Paid advertising campaigns can deliver results much faster — often within the first few
+                            weeks.
+                            Meanwhile, social media marketing builds brand awareness steadily over time. We provide
+                            transparent
+                            monthly reports so you always know where your investment is going.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        Does inkaGROWTH serve businesses outside {{city}}?
+                        <i class="fas fa-plus faq-icon"></i>
+                    </button>
+                    <div class="faq-answer" role="region">
+                        <p>Yes. While we specialise in {{service}} for businesses in {{city}}, we furthermore serve
+                            clients
+                            across {{state}} — including Moradabad, Sambhal, Badaun, and Bhajoi. Our team works remotely
+                            and
+                            delivers premium results regardless of location. Explore our
+                            <a href="/services/seo" class="inline-link">SEO services</a> and
+                            <a href="/services/web-development" class="inline-link">web development</a> pages to learn
+                            more.
+                        </p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        What makes inkaGROWTH different from other {{service}} agencies in {{city}}?
+                        <i class="fas fa-plus faq-icon"></i>
+                    </button>
+                    <div class="faq-answer" role="region">
+                        <p>Unlike generic agencies, inkaGROWTH combines data-driven strategies with bold creative.
+                            Instead of copy-paste campaigns, we build custom strategies for each client. Our clients
+                            have seen
+                            average ROI increases of 315% within 6 months. Finally, we back every campaign with
+                            transparent
+                            reporting, dedicated support, and a genuine commitment to your growth in {{city}} and
+                            beyond.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+       CONTACT FORM — Identical to homepage
+       ================================================ -->
+    <section id="contact-form">
+        <div class="container form-section fade-up">
+            <div class="form-grid">
+                <div class="form-content">
+                    <div class="tag">Free Consultation</div>
+                    <h2 style="margin-bottom: 12px;">Let's Grow Your {{city}} Business</h2>
+                    <p style="margin-bottom: 32px; color: #555;">
+                        Tell us about your goals and our team will reach out within 24 hours with a custom plan for
+                        {{service}} in {{city}}.
+                    </p>
+                    <form id="contactForm" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="info@inkagrowth.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="mobile">Mobile Number</label>
+                            <input type="tel" id="mobile" name="mobile" placeholder="+91 93898 26074" required>
+                        </div>
+                        <!-- Hidden field captures the page context -->
+                        <input type="hidden" name="page_service" value="{{service}}">
+                        <input type="hidden" name="page_city" value="{{city}}">
+                        <div class="form-group">
+                            <label for="message">Your Message / Query</label>
+                            <textarea id="message" name="message"
+                                placeholder="Tell us about your goals for {{service}} in {{city}}..."
+                                required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">
+                            Send Message <i class="fas fa-paper-plane" style="margin-left: 8px;"></i>
+                        </button>
+                    </form>
+                </div>
+                <div class="form-image">
+                    <!-- ✅ ALT text with focus keyword -->
+                    <img src="{% static 'img/contact2.png' %}" alt="{{service}} consultation team in {{city}}"
+                        loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================
+       FOOTER — Identical to homepage
+       ================================================ -->
+    <footer>
+        <div class="container footer-content">
+            <div>
+                <div class="logo" style="margin-bottom: 12px;">
+                    <span style="font-family: 'Inter', sans-serif; font-weight: 800;">
+                        <span style="color: var(--red);">inka</span>GROWTH
+                    </span>
+                </div>
+                <p style="color: #5e5e60;">Data-driven marketing · Bold creative</p>
+            </div>
+            <div class="social-links" style="justify-content: space-between;">
+                <a href="mailto:info@inkagrowth.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+                <a href="https://www.linkedin.com/company/113341291/" aria-label="LinkedIn"><i
+                        class="fab fa-linkedin-in"></i></a>
+                <a href="https://www.instagram.com/inkagrowth/" aria-label="Instagram"><i
+                        class="fab fa-instagram"></i></a>
+                <a href="https://www.facebook.com/profile.php?id=61574394691962" aria-label="Facebook"><i
+                        class="fab fa-facebook-f"></i></a>
+            </div>
+            <div>
+                <p>info@inkagrowth.com<br>+91 9389826074</p>
+            </div>
+        </div>
+        <div class="container" style="margin-top: 32px; text-align: center; font-size: 0.8rem; color: #888;">
+            © 2026 inkaGROWTH — modern marketing for tomorrow's leaders. &nbsp;|&nbsp;
+            <a href="/services/seo" style="color: #888; text-decoration: none;">SEO Services</a> &nbsp;|&nbsp;
+            <a href="/services/web-development" style="color: #888; text-decoration: none;">Web Development</a>
+            &nbsp;|&nbsp;
+            <a href="/blogs" style="color: #888; text-decoration: none;">Blogs</a> &nbsp;|&nbsp;
+            <a href="/contact" style="color: #888; text-decoration: none;">Contact</a>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/919389826074?text=Hello!%20I'm%20interested%20in%20{{service}}%20services%20in%20{{city}}"
+            target="_blank" aria-label="Chat on WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <!-- ================================================
+       SCRIPTS — All identical to homepage + FAQ toggle
+       ================================================ -->
+    <script>
+        // ---- Mobile menu toggle ----
+        const menuToggle = document.getElementById('mobileMenuToggle');
+        const navLinks = document.getElementById('navLinks');
+        if (menuToggle && navLinks) {
+            menuToggle.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                const icon = menuToggle.querySelector('i');
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-times');
+            });
+        }
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        });
+
+        // ---- Intersection Observer for scroll animations ----
+        const animatedElements = document.querySelectorAll('.fade-up, .slide-left, .slide-right');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -20px 0px' });
+        animatedElements.forEach(el => observer.observe(el));
+
+        // ---- Stagger containers ----
+        const staggerContainers = document.querySelectorAll('.stagger-container');
+        const staggerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal-stagger');
+                    staggerObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+        staggerContainers.forEach(c => staggerObserver.observe(c));
+
+        // ---- Animated counters ----
+        const counters = document.querySelectorAll('.stat-number');
+        let counted = false;
+        function startCounters() {
+            if (counted) return;
+            counted = true;
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                let current = 0;
+                const increment = target / 70;
+                const updateCounter = () => {
+                    if (current < target) {
+                        current += increment;
+                        counter.innerText = Math.floor(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCounter();
+            });
+        }
+        const statsSection = document.getElementById('stats');
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !counted) {
+                    startCounters();
+                    statsObserver.unobserve(statsSection);
+                }
+            });
+        }, { threshold: 0.4 });
+        if (statsSection) statsObserver.observe(statsSection);
+
+        // ---- FAQ accordion ----
+        document.querySelectorAll('.faq-question').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.parentElement;
+                const isOpen = item.classList.contains('open');
+                // Close all
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+                document.querySelectorAll('.faq-question').forEach(b => b.setAttribute('aria-expanded', 'false'));
+                // Toggle clicked
+                if (!isOpen) {
+                    item.classList.add('open');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+
+        // ---- Hero visible on load ----
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.hero .fade-up').forEach(el => el.classList.add('visible'));
+            // Smooth scroll for anchor links
+            const navHeight = document.querySelector('.navbar').offsetHeight;
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    const targetEl = document.querySelector(targetId);
+                    if (targetEl) {
+                        e.preventDefault();
+                        const offsetTop = targetEl.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+        });
+
+        // ---- Fallback visibility ----
+        setTimeout(() => {
+            document.querySelectorAll('.fade-up:not(.visible), .slide-left:not(.visible), .slide-right:not(.visible)')
+                .forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top < window.innerHeight - 100) el.classList.add('visible');
+                });
+        }, 300);
+
+        // ================================================================
+        // DYNAMIC VARIABLE INJECTION (server-side or JavaScript)
+        // ================================================================
+        // When rendering server-side (Django template), replace all
+        // {{variable}} placeholders before serving. For a JavaScript-driven
+        // approach, you can use the inject() helper below:
+        //
+        // const SEO_DATA = {
+        //   service: "Digital Marketing",
+        //   city: "Chandausi",
+        //   state: "Uttar Pradesh",
+        //   slug: "digital-marketing-in-chandausi",
+        //   meta_title: "Digital Marketing in Chandausi | inkaGROWTH",
+        //   meta_description: "Best digital marketing agency in Chandausi. ROI-focused SEO, paid ads, social media & web development for local businesses.",
+        //   primary_keyword: "digital marketing in Chandausi",
+        //   h1: "Digital Marketing Agency in Chandausi",
+        //   hero_subheadline: "We help businesses in Chandausi grow with SEO, paid advertising, social media marketing, and high-converting websites.",
+        //   intro_para_1: "Digital marketing in Chandausi is no longer optional — it is essential. As consumer behaviour shifts online, businesses that invest in a strong digital presence today will dominate their local market tomorrow. Furthermore, with competition growing across every industry in Uttar Pradesh, a well-executed digital strategy gives your brand the visibility, credibility, and conversions it needs.",
+        //   intro_para_2: "At inkaGROWTH, we specialise in helping Chandausi businesses build powerful online presences. Additionally, our data-driven approach means every rupee you spend is tracked, optimised, and working harder for you. Because we understand the local market, our campaigns speak directly to your target audience — not a generic, one-size-fits-all message.",
+        //   nearby_areas: ["Moradabad","Sambhal","Bhajoi","Badaun","Chandausi","Amroha"]
+        // };
+    </script>
+    <script>
+
+        setTimeout(() => {
+
+            const popup = document.querySelector('.popup-message');
+
+            if (popup) {
+
+                popup.style.display = 'none';
+
+            }
+
+        }, 3000);
+
+    </script>
+</body>
+
+{% if messages %}
+
+{% for message in messages %}
+
+<div class="popup-message">
+
+    {{ message }}
+
+</div>
+
+{% endfor %}
+
+{% endif %}
+
+</html>

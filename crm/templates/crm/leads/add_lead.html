@@ -1,0 +1,114 @@
+{% extends 'crm/base/base.html' %}
+
+{% block title %}Add Lead | InkaGROWTH CRM{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <p class="page-kicker">Pipeline</p>
+        <h2>Add lead</h2>
+        <p>Capture prospect details, assign ownership, and place the opportunity in the right pipeline stage.</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn btn-secondary" href="{% url 'lead_list' %}">
+            <i data-lucide="arrow-left"></i>
+            <span>Back</span>
+        </a>
+    </div>
+</section>
+
+<form class="form-card" method="post">
+    {% csrf_token %}
+    <div class="form-grid">
+        <div class="form-field">
+            <label for="name">Lead name</label>
+            <input id="name" name="name" type="text" placeholder="Client contact name" required>
+        </div>
+
+        <div class="form-field">
+            <label for="company_name">Company</label>
+            <input id="company_name" name="company_name" type="text" placeholder="Business or brand name">
+        </div>
+
+        <div class="form-field">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" placeholder="+91 98765 43210" required>
+        </div>
+
+        <div class="form-field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="name@example.com">
+        </div>
+
+        <div class="form-field">
+            <label for="website">Website</label>
+            <input id="website" name="website" type="url" placeholder="https://example.com">
+        </div>
+
+        <div class="form-field">
+            <label for="lead_source">Lead source</label>
+            <select id="lead_source" name="lead_source">
+                {% for value, label in lead_source_choices %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label for="service">Interested service</label>
+            <select id="service" name="service">
+                <option value="">Select a service</option>
+                {% for service in services %}
+                <option value="{{ service.id }}">{{ service.name }} - Rs. {{ service.price|floatformat:2 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label for="budget">Budget</label>
+            <input id="budget" name="budget" type="number" min="0" step="0.01" placeholder="Estimated monthly budget">
+        </div>
+
+        <div class="form-field">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                {% for value, label in status_choices %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label for="pipeline_stage">Pipeline stage</label>
+            <select id="pipeline_stage" name="pipeline_stage">
+                {% for value, label in pipeline_choices %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field full">
+            <label for="assigned_to">Assigned to</label>
+            <select id="assigned_to" name="assigned_to">
+                <option value="">Unassigned</option>
+                {% for user in users %}
+                <option value="{{ user.id }}">{{ user.get_full_name|default:user.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-field full">
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes" placeholder="Campaign goals, pain points, next steps"></textarea>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a class="btn btn-secondary" href="{% url 'lead_list' %}">Cancel</a>
+        <button class="btn btn-primary" type="submit">
+            <i data-lucide="save"></i>
+            <span>Save Lead</span>
+        </button>
+    </div>
+</form>
+{% endblock %}
