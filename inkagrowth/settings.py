@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-pl#+ni1b*7fv=ul=b$7*x!8w#33&k*yq9&f%5laeh)(xqafgq8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+
 
 
 # Application definition
@@ -117,9 +117,13 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+
+ALLOWED_HOSTS = [
+    "inkagrowth.com",
+    "www.inkagrowth.com",
+    ".onrender.com"
+]
 
 # settings.py
 
