@@ -17,12 +17,7 @@ sitemaps = {
     'seo_pages': SEOPageSitemap,
 }
 
-path(
-    'sitemap.xml',
-    sitemap,
-    {'sitemaps': sitemaps},
-    name='django.contrib.sitemaps.views.sitemap'
-),
+
 
 from front import views as front_views
 
@@ -43,6 +38,14 @@ urlpatterns = [
         'admin',
         admin.site.urls
     ),
+
+    path(
+        'sitemap.xml',
+        sitemap,
+        {'sitemaps': sitemaps},
+        name='django.contrib.sitemaps.views.sitemap'
+    ),
+
 
 
     # =====================================================
