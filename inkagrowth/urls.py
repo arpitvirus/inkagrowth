@@ -34,7 +34,7 @@ urlpatterns = [
     # =====================================================
 
     path(
-        'admin',
+        'admin/',
         admin.site.urls
     ),
 
