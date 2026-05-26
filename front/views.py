@@ -12,6 +12,10 @@ def robots_txt(request):
         content_type="text/plain"
     )
 
+
+def ping(request):
+    return HttpResponse("OK")
+
 # HOME PAGE
 def index(request):
 

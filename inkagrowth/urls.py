@@ -45,6 +45,7 @@ urlpatterns = [
     name='django.contrib.sitemaps.views.sitemap'
 ),
 
+path("ping/", front_views.ping),
 
 path(
     'robots.txt',
