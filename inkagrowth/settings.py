@@ -22,7 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-pl#+ni1b*7fv=ul=b$7*x!8w#33&k*yq9&f%5laeh)(xqafgq8'
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-pl#+ni1b*7fv=ul=b$7*x!8w#33&k*yq9&f%5laeh)(xqafgq8'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -123,7 +126,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 ALLOWED_HOSTS = [
     "inkagrowth.com",
     "www.inkagrowth.com",
-    ".onrender.com"
+    ".onrender.com",
+    "localhost",
+    "127.0.0.1",
 ]
 
 # settings.py
@@ -136,6 +141,12 @@ LOGIN_REDIRECT_URL = '/crm/dashboard/'
 LOGOUT_REDIRECT_URL = '/crm/login/'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+X_FRAME_OPTIONS = 'DENY'
 
 
 # Google Sheets lead sync

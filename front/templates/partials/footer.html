@@ -1,0 +1,148 @@
+{% load static %}
+<style>
+    .agency-footer {
+        background: #111111;
+        color: #ffffff;
+        padding: 80px 0 25px;
+    }
+
+    .agency-footer-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr 1fr 1.2fr 1fr;
+        gap: 36px;
+    }
+
+    .agency-footer h4 {
+        margin-bottom: 20px;
+        color: #ffffff;
+        font-size: 1.05rem;
+    }
+
+    .agency-footer p {
+        color: #cfcfcf;
+        line-height: 1.8;
+    }
+
+    .agency-footer a {
+        display: block;
+        color: #cfcfcf;
+        text-decoration: none;
+        margin-bottom: 12px;
+        transition: .3s;
+    }
+
+    .agency-footer a:hover {
+        color: #d43c32;
+        transform: translateX(4px);
+    }
+
+    .agency-footer-social {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .agency-footer-social a {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #1f1f1f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        margin: 0;
+    }
+
+    .agency-footer-social a:hover {
+        background: #d43c32;
+    }
+
+    .agency-footer-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 50px;
+        padding-top: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .agency-footer-bottom a {
+        display: inline;
+        margin: 0 5px;
+    }
+
+    @media(max-width: 1000px) {
+        .agency-footer-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media(max-width: 640px) {
+        .agency-footer-grid {
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .agency-footer-bottom {
+            text-align: center;
+            justify-content: center;
+        }
+    }
+</style>
+
+<footer class="agency-footer">
+    <div class="container">
+        <div class="agency-footer-grid">
+            <div>
+                <img src="{% static 'img/inka_logo_transparent.png' %}" alt="InkaGROWTH Logo" style="width: 200px; margin-bottom: 15px;">
+                <p>InkaGROWTH helps businesses scale through SEO, social media marketing, Google Ads, website development, and full-funnel digital marketing.</p>
+            </div>
+
+            <div>
+                <h4>Quick Links</h4>
+                <a href="/">Home</a>
+                <a href="/#about">About</a>
+                <a href="/#services">Services</a>
+                <a href="https://blog.inkagrowth.com">Blog</a>
+                <a href="/contact/">Contact</a>
+            </div>
+
+            <div>
+                <h4>Services</h4>
+                <a href="/seo-services/">SEO</a>
+                <a href="/social-media-marketing/">Social Media Marketing</a>
+                <a href="/google-ads-services/">Google Ads</a>
+                <a href="/website-development/">Website Development</a>
+                <a href="/digital-marketing-services/">Digital Marketing</a>
+            </div>
+
+            <div>
+                <h4>Contact</h4>
+                <p>Email:<br><a href="mailto:info@inkagrowth.com">info@inkagrowth.com</a></p>
+                <p>Phone:<br><a href="tel:+919389826074">+91 9389826074</a></p>
+                <p>Website:<br><a href="https://www.inkagrowth.com">https://www.inkagrowth.com</a></p>
+            </div>
+
+            <div>
+                <h4>Social Links</h4>
+                <div class="agency-footer-social">
+                    <a href="https://www.linkedin.com/company/inkagrowth/" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://www.instagram.com/inkagrowth/" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/profile.php?id=61574394691962" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="agency-footer-bottom">
+            <p>Copyright © 2026 InkaGROWTH. All Rights Reserved.</p>
+            <div>
+                <a href="/privacy-policy/">Privacy Policy</a>
+                <span>|</span>
+                <a href="/terms-and-conditions/">Terms & Conditions</a>
+            </div>
+        </div>
+    </div>
+</footer>

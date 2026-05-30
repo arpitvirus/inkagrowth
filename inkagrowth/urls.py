@@ -12,16 +12,6 @@ from django.conf.urls.static import static
 # =========================================================
 # FRONTEND VIEWS
 # =========================================================
-from django.contrib.sitemaps.views import sitemap
-from front.sitemap import StaticSitemap, SEOPageSitemap
-
-sitemaps = {
-    "static": StaticSitemap,
-    "seo": SEOPageSitemap,
-}
-
-
-
 urlpatterns = [
 
     # =====================================================
@@ -35,8 +25,7 @@ urlpatterns = [
 
     path(
         "sitemap.xml",
-        sitemap,
-        {"sitemaps": sitemaps},
+        front_views.sitemap_xml,
         name="sitemap"
     ),
 
@@ -56,6 +45,75 @@ path(
         '',
         front_views.index,
         name='index'
+    ),
+
+    path(
+        'seo-services/',
+        front_views.service_page,
+        {'slug': 'seo-services'},
+        name='seo_services'
+    ),
+
+    path(
+        'social-media-marketing/',
+        front_views.service_page,
+        {'slug': 'social-media-marketing'},
+        name='social_media_marketing'
+    ),
+
+    path(
+        'google-ads-services/',
+        front_views.service_page,
+        {'slug': 'google-ads-services'},
+        name='google_ads_services'
+    ),
+
+    path(
+        'website-development/',
+        front_views.service_page,
+        {'slug': 'website-development'},
+        name='website_development'
+    ),
+
+    path(
+        'digital-marketing-services/',
+        front_views.service_page,
+        {'slug': 'digital-marketing-services'},
+        name='digital_marketing_services'
+    ),
+
+    path(
+        'privacy-policy/',
+        front_views.legal_page,
+        {'slug': 'privacy-policy'},
+        name='privacy_policy'
+    ),
+
+    path(
+        'terms-and-conditions/',
+        front_views.legal_page,
+        {'slug': 'terms-and-conditions'},
+        name='terms_and_conditions'
+    ),
+
+    path(
+        'disclaimer/',
+        front_views.legal_page,
+        {'slug': 'disclaimer'},
+        name='disclaimer'
+    ),
+
+    path(
+        'cookie-policy/',
+        front_views.legal_page,
+        {'slug': 'cookie-policy'},
+        name='cookie_policy'
+    ),
+
+    path(
+        'contact/',
+        front_views.contact_page,
+        name='contact'
     ),
 
 
