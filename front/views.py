@@ -246,23 +246,31 @@ def faq_schema():
 def jsonld(*items):
     return json.dumps([item for item in items if item], ensure_ascii=False)
 
-def robots_txt(request):
-    response = render(request, "robots.txt", content_type="text/plain")
+
+def xml_response(root):
+    xml = b'<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(root, encoding="utf-8")
+    response = HttpResponse(xml, content_type="application/xml")
     response.headers.pop("X-Robots-Tag", None)
     return response
 
 
-def sitemap_xml(request):
+def sitemap_urlset(items):
     urlset = Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
-    today = date.today().isoformat()
 
-    static_paths = [
+    for item in items:
+        url = SubElement(urlset, "url")
+        SubElement(url, "loc").text = item["loc"]
+        SubElement(url, "lastmod").text = item["lastmod"]
+        SubElement(url, "changefreq").text = item["changefreq"]
+        SubElement(url, "priority").text = item["priority"]
+
+    return urlset
+
+
+def page_sitemap_items():
+    today = date.today().isoformat()
+    page_paths = [
         ("/", "daily", "1.0"),
-        ("/seo-services/", "weekly", "0.9"),
-        ("/social-media-marketing/", "weekly", "0.9"),
-        ("/google-ads-services/", "weekly", "0.9"),
-        ("/website-development/", "weekly", "0.9"),
-        ("/digital-marketing-services/", "weekly", "0.9"),
         ("/contact/", "monthly", "0.8"),
         ("/privacy-policy/", "yearly", "0.6"),
         ("/terms-and-conditions/", "yearly", "0.6"),
@@ -270,24 +278,76 @@ def sitemap_xml(request):
         ("/cookie-policy/", "yearly", "0.5"),
     ]
 
-    for path, changefreq, priority in static_paths:
-        url = SubElement(urlset, "url")
-        SubElement(url, "loc").text = build_url(path)
-        SubElement(url, "lastmod").text = today
-        SubElement(url, "changefreq").text = changefreq
-        SubElement(url, "priority").text = priority
+    return [
+        {
+            "loc": build_url(path),
+            "lastmod": today,
+            "changefreq": changefreq,
+            "priority": priority,
+        }
+        for path, changefreq, priority in page_paths
+    ]
+
+
+def service_sitemap_items():
+    today = date.today().isoformat()
+    service_paths = [
+        ("/seo-services/", "weekly", "0.9"),
+        ("/social-media-marketing/", "weekly", "0.9"),
+        ("/google-ads-services/", "weekly", "0.9"),
+        ("/website-development/", "weekly", "0.9"),
+        ("/digital-marketing-services/", "weekly", "0.9"),
+    ]
+    items = [
+        {
+            "loc": build_url(path),
+            "lastmod": today,
+            "changefreq": changefreq,
+            "priority": priority,
+        }
+        for path, changefreq, priority in service_paths
+    ]
 
     for page in SEOPage.objects.all().order_by("slug"):
-        url = SubElement(urlset, "url")
-        SubElement(url, "loc").text = build_url(f"/{page.slug}/")
-        SubElement(url, "lastmod").text = today
-        SubElement(url, "changefreq").text = "weekly"
-        SubElement(url, "priority").text = "0.7"
+        items.append(
+            {
+                "loc": build_url(f"/{page.slug}/"),
+                "lastmod": today,
+                "changefreq": "weekly",
+                "priority": "0.7",
+            }
+        )
 
-    xml = b'<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(urlset, encoding="utf-8")
-    response = HttpResponse(xml, content_type="application/xml")
+    return items
+
+
+def robots_txt(request):
+    response = render(request, "robots.txt", content_type="text/plain")
     response.headers.pop("X-Robots-Tag", None)
     return response
+
+
+def sitemap_xml(request):
+    sitemapindex = Element(
+        "sitemapindex",
+        xmlns="http://www.sitemaps.org/schemas/sitemap/0.9",
+    )
+    today = date.today().isoformat()
+
+    for sitemap_path in ["/sitemap-services.xml", "/sitemap-pages.xml"]:
+        sitemap = SubElement(sitemapindex, "sitemap")
+        SubElement(sitemap, "loc").text = build_url(sitemap_path)
+        SubElement(sitemap, "lastmod").text = today
+
+    return xml_response(sitemapindex)
+
+
+def sitemap_services_xml(request):
+    return xml_response(sitemap_urlset(service_sitemap_items()))
+
+
+def sitemap_pages_xml(request):
+    return xml_response(sitemap_urlset(page_sitemap_items()))
 
 
 def ping(request):

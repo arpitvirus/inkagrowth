@@ -29,6 +29,18 @@ urlpatterns = [
         name="sitemap"
     ),
 
+    path(
+        "sitemap-services.xml",
+        front_views.sitemap_services_xml,
+        name="sitemap_services"
+    ),
+
+    path(
+        "sitemap-pages.xml",
+        front_views.sitemap_pages_xml,
+        name="sitemap_pages"
+    ),
+
 path("ping/", front_views.ping),
 
 path(
