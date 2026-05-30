@@ -128,6 +128,12 @@ path(
         name='contact'
     ),
 
+    path(
+        'team/',
+        front_views.team_page,
+        name='team'
+    ),
+
 
     # =====================================================
     # CRM AUTHENTICATION

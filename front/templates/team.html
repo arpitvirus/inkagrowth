@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Meet Our Team | InkaGROWTH</title>
+    <meta name="description" content="Meet the leadership team behind InkaGROWTH. Learn about our founder, sales manager, and product manager.">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="InkaGROWTH">
+    <meta name="theme-color" content="#111111">
+    <link rel="canonical" href="{{ canonical }}">
+    <link rel="icon" href="{% static 'img/logo.png' %}" type="image/png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Meet Our Team | InkaGROWTH">
+    <meta property="og:description" content="Meet the leadership team behind InkaGROWTH. Learn about our founder, sales manager, and product manager.">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:image" content="https://www.inkagrowth.com/static/img/logo.png">
+    <meta property="og:site_name" content="InkaGROWTH">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Meet Our Team | InkaGROWTH">
+    <meta name="twitter:description" content="Meet the leadership team behind InkaGROWTH. Learn about our founder, sales manager, and product manager.">
+    <meta name="twitter:image" content="https://www.inkagrowth.com/static/img/logo.png">
+    <script type="application/ld+json">{{ schema_json|safe }}</script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; color: #111111; background: #ffffff; line-height: 1.6; overflow-x: hidden; }
+        :root { --black:#111111; --white:#ffffff; --red:#d43c32; --red-dark:#b22f26; --red-light:rgba(212,60,50,.08); --gray-light:#f5f5f7; --gray-border:#e9e9ef; --shadow-sm:0 8px 20px rgba(0,0,0,.02),0 2px 6px rgba(0,0,0,.05); --shadow-md:0 20px 35px -12px rgba(0,0,0,.08); --shadow-hover:0 30px 40px -18px rgba(0,0,0,.2); --transition-smooth:all .3s cubic-bezier(.2,.9,.4,1.1); }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+        section { padding: 88px 0; }
+        h1, h2, h3 { font-weight: 600; letter-spacing: 0; line-height: 1.15; }
+        h1 { font-size: 3.55rem; margin-bottom: 22px; }
+        h2 { font-size: 2.35rem; margin-bottom: 16px; }
+        h3 { font-size: 1.25rem; margin-bottom: 6px; }
+        p { color: #4a4a4a; }
+        .navbar { position: sticky; top: 0; background: rgba(255,255,255,.92); backdrop-filter: blur(12px); z-index: 1000; border-bottom: 1px solid var(--gray-border); padding: 18px 0; }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .nav-links { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
+        .nav-links a { text-decoration: none; color: var(--black); font-weight: 500; transition: color .2s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--red); }
+        .btn-primary { display: inline-block; background: var(--red); color: #ffffff !important; font-weight: 600; padding: 14px 32px; border-radius: 40px; text-decoration: none; border: none; cursor: pointer; font-size: 1rem; transition: var(--transition-smooth); box-shadow: 0 2px 8px rgba(212,60,50,.2); }
+        .btn-primary:hover { background: var(--red-dark); transform: scale(1.02); box-shadow: 0 12px 24px rgba(212,60,50,.3); }
+        .breadcrumb { padding: 22px 0 0; font-size: .92rem; color: #777777; }
+        .breadcrumb a { color: #777777; text-decoration: none; }
+        .breadcrumb a:hover { color: var(--red); }
+        .breadcrumb span { margin: 0 8px; }
+        .hero { padding: 64px 0 82px; background: linear-gradient(135deg, #ffffff 0%, #fffcfc 100%); position: relative; overflow: hidden; }
+        .hero:after { content: ""; position: absolute; top: -30%; right: -12%; width: 620px; height: 620px; background: radial-gradient(circle, rgba(212,60,50,.08), rgba(212,60,50,0) 68%); pointer-events: none; }
+        .hero-content { max-width: 820px; position: relative; z-index: 1; }
+        .tag { color: var(--red); font-weight: 700; text-transform: uppercase; font-size: .82rem; margin-bottom: 14px; letter-spacing: .08em; }
+        .section-subhead { font-size: 1.14rem; max-width: 720px; margin-bottom: 44px; }
+        .team-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px; }
+        .team-card { background: #ffffff; border: 1px solid var(--gray-border); border-radius: 22px; overflow: hidden; box-shadow: var(--shadow-sm); transition: var(--transition-smooth); }
+        .team-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-hover); border-color: rgba(212,60,50,.25); }
+        .member-image { aspect-ratio: 4 / 3; background: var(--gray-light); overflow: hidden; }
+        .member-image img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s ease; }
+        .team-card:hover .member-image img { transform: scale(1.05); }
+        .member-body { padding: 28px 24px 26px; }
+        .position { color: var(--red); font-weight: 700; margin-bottom: 12px; }
+        .bio { margin: 18px 0 22px; }
+        .member-meta { display: grid; gap: 10px; padding-top: 18px; border-top: 1px solid var(--gray-border); }
+        .member-meta a, .member-meta span { color: #4a4a4a; text-decoration: none; overflow-wrap: anywhere; }
+        .member-meta i { color: var(--red); width: 22px; }
+        .values { background: var(--gray-light); }
+        .values-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+        .value-card { background: #ffffff; border: 1px solid var(--gray-border); border-radius: 18px; padding: 26px 22px; box-shadow: var(--shadow-sm); transition: var(--transition-smooth); }
+        .value-card:hover { transform: translateY(-6px); border-color: rgba(212,60,50,.25); }
+        .value-card i { color: var(--red); font-size: 2rem; margin-bottom: 16px; }
+        .cta { text-align: center; background: linear-gradient(135deg, #111111 0%, #1b1b1b 100%); color: #ffffff; }
+        .cta h2 { color: #ffffff; }
+        .cta p { color: #cfcfcf; margin: 0 auto 28px; max-width: 620px; }
+        @media(max-width: 980px) { .team-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .values-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media(max-width: 720px) { .container { padding: 0 22px; } h1 { font-size: 2.42rem; } h2 { font-size: 1.9rem; } section { padding: 68px 0; } .team-grid, .values-grid { grid-template-columns: 1fr; } .nav-links { gap: 16px; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/"><img src="{% static 'img/inka_logo_transparent.png' %}" alt="InkaGROWTH Logo" style="width: 120px; height: 50px"></a>
+            <div class="nav-links">
+                <a href="/#services">Services</a>
+                <a href="/#about">About</a>
+                <a href="/team/" class="active">Team</a>
+                <a href="https://blog.inkagrowth.com">Blog</a>
+                <a href="/contact/">Contact</a>
+                <a href="tel:+919389826074" class="btn-primary" style="padding: 10px 24px; font-size: .9rem;">Get Free Quote</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container breadcrumb">
+        <a href="/">Home</a><span>/</span><span>Our Team</span>
+    </div>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="tag">Our Team</div>
+            <h1>Meet The Team Behind InkaGROWTH</h1>
+            <p class="section-subhead">A passionate team helping businesses grow through digital marketing, technology, and innovation.</p>
+            <a href="/contact/" class="btn-primary">Contact Us <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></a>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <h2>Leadership Team</h2>
+            <p class="section-subhead">The people shaping strategy, client success, product delivery, and long-term growth at InkaGROWTH.</p>
+            <div class="team-grid">
+                {% for member in team_members %}
+                <article class="team-card">
+                    <div class="member-image">
+                        <img src="{% static member.image %}" alt="{{ member.name }} - {{ member.position }}" loading="lazy">
+                    </div>
+                    <div class="member-body">
+                        <h3>{{ member.name }}</h3>
+                        <p class="position">{{ member.position }}</p>
+                        <p class="bio">{{ member.bio }}</p>
+                        <div class="member-meta">
+                            <span><i class="fa-solid fa-id-badge"></i>{{ member.employee_id }}</span>
+                            <a href="tel:{{ member.mobile }}"><i class="fa-solid fa-phone"></i>{{ member.mobile }}</a>
+                            <a href="mailto:{{ member.email }}"><i class="fa-solid fa-envelope"></i>{{ member.email }}</a>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="values">
+        <div class="container">
+            <h2>What Drives Our Team</h2>
+            <p class="section-subhead">Shared values that keep our work focused, measurable, and genuinely useful for clients.</p>
+            <div class="values-grid">
+                <div class="value-card"><i class="fas fa-lightbulb"></i><h3>Innovation</h3><p>We use practical technology and creative strategy to solve growth challenges.</p></div>
+                <div class="value-card"><i class="fas fa-handshake"></i><h3>Transparency</h3><p>Clear communication, honest reporting, and visible progress guide every partnership.</p></div>
+                <div class="value-card"><i class="fas fa-chart-line"></i><h3>Growth</h3><p>Every campaign is built around measurable business outcomes, not vanity metrics.</p></div>
+                <div class="value-card"><i class="fas fa-users"></i><h3>Customer Success</h3><p>We focus on long-term relationships, reliable delivery, and client confidence.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <h2>Let's Grow Together</h2>
+            <p>Work with a focused digital marketing team that cares about strategy, execution, and measurable results.</p>
+            <a href="/contact/" class="btn-primary">Contact Us</a>
+        </div>
+    </section>
+
+    {% include 'partials/footer.html' %}
+</body>
+</html>

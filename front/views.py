@@ -209,6 +209,36 @@ LEGAL_PAGES = {
     },
 }
 
+TEAM_MEMBERS = [
+    {
+        "name": "Arpit Kumar",
+        "position": "CEO & Founder",
+        "employee_id": "INKA2026-CE-001",
+        "mobile": "+91 9389826074",
+        "email": "arpit@inkagrowth.com",
+        "bio": "Founder of InkaGROWTH with expertise in digital marketing, SEO, web development, and business growth strategies.",
+        "image": "img/Arpit.jpeg",
+    },
+    {
+        "name": "Prabhat Kumar",
+        "position": "Product Manager",
+        "employee_id": "INKA2026-PM-002",
+        "mobile": "+91 7983837923",
+        "email": "prabhat@inkagrowth.com",
+        "bio": "Responsible for product planning, execution, and delivering exceptional digital solutions to clients.",
+        "image": "img/Prabhat.png",
+    },
+    {
+        "name": "Arvind Pal",
+        "position": "Sales Manager",
+        "employee_id": "INKA2026-SM-003",
+        "mobile": "+91 8168724206",
+        "email": "arvind@inkagrowth.com",
+        "bio": "Leads client acquisition, business development, and customer relationship management.",
+        "image": "img/Arvind.png",
+    },
+]
+
 
 def build_url(path):
     return f"{SITE_URL}{path}"
@@ -271,6 +301,7 @@ def page_sitemap_items():
     today = date.today().isoformat()
     page_paths = [
         ("/", "daily", "1.0"),
+        ("/team/", "monthly", "0.8"),
         ("/contact/", "monthly", "0.8"),
         ("/privacy-policy/", "yearly", "0.6"),
         ("/terms-and-conditions/", "yearly", "0.6"),
@@ -478,6 +509,38 @@ def contact_page(request):
                     "description": page["description"],
                 }
             ),
+        },
+    )
+
+
+def team_page(request):
+    canonical = build_url("/team/")
+    person_schemas = [
+        {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": member["name"],
+            "jobTitle": member["position"],
+            "identifier": member["employee_id"],
+            "telephone": member["mobile"],
+            "email": member["email"],
+            "image": build_url(f"/static/{member['image']}"),
+            "description": member["bio"],
+            "worksFor": {
+                "@type": "Organization",
+                "name": BRAND_NAME,
+                "url": SITE_URL,
+            },
+        }
+        for member in TEAM_MEMBERS
+    ]
+    return render(
+        request,
+        "team.html",
+        {
+            "canonical": canonical,
+            "team_members": TEAM_MEMBERS,
+            "schema_json": jsonld(*person_schemas),
         },
     )
 
