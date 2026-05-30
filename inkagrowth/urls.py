@@ -5,26 +5,21 @@ URL configuration for inkagrowth project.
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings
+from front import views as front_views
+from crm import views as crm_views
 from django.conf.urls.static import static
-from django.contrib.sitemaps.views import sitemap
-from front.sitemap import SEOPageSitemap
 
 # =========================================================
 # FRONTEND VIEWS
 # =========================================================
+from django.contrib.sitemaps.views import sitemap
+from front.sitemap import StaticSitemap, SEOPageSitemap
+
 sitemaps = {
-    'seo_pages': SEOPageSitemap,
+    "static": StaticSitemap,
+    "seo": SEOPageSitemap,
 }
 
-
-
-from front import views as front_views
-
-# =========================================================
-# CRM VIEWS
-# =========================================================
-
-from crm import views as crm_views
 
 
 urlpatterns = [
@@ -39,11 +34,11 @@ urlpatterns = [
     ),
 
     path(
-    'sitemap.xml',
-    sitemap,
-    {'sitemaps': sitemaps},
-    name='django.contrib.sitemaps.views.sitemap'
-),
+        "sitemap.xml",
+        sitemap,
+        {"sitemaps": sitemaps},
+        name="sitemap"
+    ),
 
 path("ping/", front_views.ping),
 
