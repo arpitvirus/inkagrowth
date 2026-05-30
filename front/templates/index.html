@@ -583,6 +583,67 @@
             }
         }
 
+        /* FAQ Section */
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: #fff;
+            border: 1px solid var(--gray-border);
+            border-radius: 20px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
+        }
+
+        .faq-item:hover {
+            border-color: rgba(212, 60, 50, 0.25);
+        }
+
+        .faq-question {
+            width: 100%;
+            background: #fff;
+            border: none;
+            padding: 22px 24px;
+            text-align: left;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--black);
+        }
+
+        .faq-question span {
+            color: var(--red);
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+
+        .faq-answer p {
+            padding: 0 24px 22px;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+        }
+
+        .faq-item.active .faq-question span {
+            transform: rotate(45deg);
+        }
+
         .bar-growth {
             transform-origin: bottom;
             animation: barRise 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
@@ -975,6 +1036,74 @@
         </div>
     </center>
 
+    <!-- FAQ SECTION -->
+    <section id="faq">
+        <div class="container">
+            <h2 class="fade-up" style="text-align:center;">Frequently Asked Questions</h2>
+            <p class="section-subhead fade-up" style="text-align:center; margin:0 auto 48px auto;">
+                Answers to common questions about our digital marketing services.
+            </p>
+
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        How long does SEO take to show results?
+                        <span>+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>SEO is a long-term strategy. Most businesses start seeing noticeable improvements within 3–6
+                            months depending on competition and website authority.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Do you provide website development services?
+                        <span>+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes. We build fast, mobile-friendly, SEO-optimized websites designed to generate leads and
+                            conversions.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        What platforms do you run paid ads on?
+                        <span>+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>We manage campaigns on Google Ads, Facebook Ads, Instagram Ads, LinkedIn Ads, and other
+                            performance marketing platforms.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Can you manage social media accounts?
+                        <span>+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes. We create content, manage engagement, grow followers, and run social media campaigns to
+                            increase brand awareness.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        How can I get started with InkaGROWTH?
+                        <span>+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Simply fill out the contact form or call us directly. We'll schedule a free consultation and
+                            discuss your business goals.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
     <!-- CONTACT FORM SECTION -->
     <section id="contact-form">
         <div class="container form-section fade-up">
@@ -1199,6 +1328,22 @@
 
         }, 3000);
 
+    </script>
+
+    <script>
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const item = button.parentElement;
+
+                document.querySelectorAll('.faq-item').forEach(faq => {
+                    if (faq !== item) {
+                        faq.classList.remove('active');
+                    }
+                });
+
+                item.classList.toggle('active');
+            });
+        });
     </script>
 </body>
 {% if messages %}
