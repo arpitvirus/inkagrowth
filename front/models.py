@@ -16,3 +16,6 @@ class SEOPage(models.Model):
     meta_title = models.CharField(max_length=200)
     meta_description = models.TextField()
     content = models.TextField()
+
+    def __str__(self):
+        return f"{self.service} - {self.city}"
