@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{% block title %}Post Dashboard | INKAGROWTH{% endblock %}</title>
+    <link rel="icon" href="{% static 'img/logo.png' %}" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --red: #d43c32; --black: #111; --muted: #666; --border: #e9e9ef; --soft: #f7f7f9; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Inter, sans-serif; color: var(--black); background: #fff; }
+        a { color: inherit; }
+        .dash-shell { display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: 100vh; }
+        .dash-side { background: #111; color: #fff; padding: 28px 22px; }
+        .dash-side img { width: 150px; margin-bottom: 28px; }
+        .dash-side a { display: block; color: #ddd; text-decoration: none; padding: 11px 0; font-weight: 600; }
+        .dash-side a:hover { color: #fff; }
+        .dash-main { padding: 32px; background: var(--soft); }
+        .dash-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin-bottom: 20px; }
+        .dash-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; }
+        h1 { margin: 0; font-size: 2rem; letter-spacing: 0; }
+        h2 { margin: 0 0 16px; font-size: 1.25rem; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 6px; padding: 10px 16px; background: var(--red); color: #fff; font-weight: 700; text-decoration: none; cursor: pointer; }
+        .btn.secondary { background: #222; }
+        .btn.light { background: #fff; color: #111; border: 1px solid var(--border); }
+        .dashboard-input { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 11px 12px; font: inherit; background: #fff; }
+        textarea.dashboard-input { min-height: 90px; }
+        .grid { display: grid; grid-template-columns: minmax(0, 1.5fr) 360px; gap: 20px; align-items: start; }
+        .field { margin-bottom: 16px; }
+        label { display: block; font-weight: 700; margin-bottom: 7px; }
+        .help, .muted { color: var(--muted); font-size: .9rem; }
+        .checks { display: grid; gap: 8px; }
+        .check { border-radius: 6px; padding: 9px 10px; font-size: .9rem; border: 1px solid var(--border); }
+        .green { background: #ecfdf3; color: #067647; }
+        .orange { background: #fff7ed; color: #b54708; }
+        .red { background: #fef3f2; color: #b42318; }
+        table { width: 100%; border-collapse: collapse; background: #fff; }
+        th, td { text-align: left; padding: 13px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        .messages { margin-bottom: 16px; }
+        .messages div { background: #ecfdf3; color: #067647; padding: 10px 12px; border-radius: 6px; }
+        .errorlist { color: #b42318; padding-left: 18px; }
+        @media (max-width: 900px) { .dash-shell, .grid { grid-template-columns: 1fr; } .dash-side { position: static; } .dash-main { padding: 20px; } }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="dash-shell">
+        <aside class="dash-side">
+            <a href="/"><img src="{% static 'img/inka_logo_transparent.png' %}" alt="INKAGROWTH Digital Marketing Agency Logo"></a>
+            <a href="{% url 'dashboard_posts' %}">Posts</a>
+            <a href="{% url 'dashboard_post_create' %}">Create Post</a>
+            <a href="{% url 'dashboard_media' %}">Media</a>
+            <a href="{% url 'dashboard_categories' %}">Categories</a>
+            <a href="{% url 'dashboard_tags' %}">Tags</a>
+            <a href="/blog/">Public Blog</a>
+        </aside>
+        <main class="dash-main">
+            {% if messages %}<div class="messages">{% for message in messages %}<div>{{ message }}</div>{% endfor %}</div>{% endif %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

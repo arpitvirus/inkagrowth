@@ -1,0 +1,152 @@
+{% extends "dashboard/posts/base.html" %}
+{% block title %}{% if post %}Edit{% else %}Create{% endif %} Post | INKAGROWTH{% endblock %}
+{% block head %}
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    if (window.tinymce) {
+        tinymce.init({
+            selector: ".rich-editor",
+            height: 520,
+            plugins: "lists link image table code blockquote media preview",
+            toolbar: "undo redo | blocks | bold italic underline | bullist numlist | link image media table blockquote | code preview",
+            menubar: false
+        });
+    }
+    const title = document.getElementById("id_title");
+    const focus = document.getElementById("id_focus_keyphrase");
+    const slug = document.getElementById("id_slug");
+    const metaTitle = document.getElementById("id_meta_title");
+    const metaDescription = document.getElementById("id_meta_description");
+    const slugPreview = document.getElementById("slugPreview");
+    const googleTitle = document.getElementById("googleTitle");
+    const googleDesc = document.getElementById("googleDesc");
+    const socialTitle = document.getElementById("socialTitle");
+    const socialDesc = document.getElementById("socialDesc");
+    function toSlug(value) {
+        return (value || "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    }
+    function updatePreview() {
+        if (focus && slug && !slug.value) slug.value = toSlug(focus.value || title.value);
+        if (focus && metaTitle && !metaTitle.value) metaTitle.value = (focus.value + " | INKAGROWTH").slice(0, 60);
+        slugPreview.textContent = "https://www.inkagrowth.com/" + (slug.value || "post-slug") + "/";
+        googleTitle.textContent = metaTitle.value || title.value || "SEO title";
+        googleDesc.textContent = metaDescription.value || "Meta description preview";
+        socialTitle.textContent = document.getElementById("id_og_title").value || googleTitle.textContent;
+        socialDesc.textContent = document.getElementById("id_og_description").value || googleDesc.textContent;
+    }
+    document.querySelectorAll("input, textarea, select").forEach(el => el.addEventListener("input", updatePreview));
+    updatePreview();
+});
+</script>
+{% endblock %}
+{% block content %}
+<div class="dash-head">
+    <h1>{% if post %}Edit Post{% else %}Create Post{% endif %}</h1>
+    <div>
+        {% if post %}<a class="btn light" href="{% url 'dashboard_post_preview' post.id %}">Preview</a>{% endif %}
+        <a class="btn light" href="{% url 'dashboard_posts' %}">All Posts</a>
+    </div>
+</div>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="grid">
+        <div>
+            <div class="dash-card">
+                <div class="field">{{ form.title.label_tag }}{{ form.title }}{{ form.title.errors }}</div>
+                <div class="field">{{ form.content.label_tag }}{{ form.content }}{{ form.content.errors }}</div>
+                <div class="field">{{ form.excerpt.label_tag }}{{ form.excerpt }}{{ form.excerpt.errors }}</div>
+            </div>
+            <div class="dash-card">
+                <h2>SEO Panel</h2>
+                <div class="field">{{ form.focus_keyphrase.label_tag }}{{ form.focus_keyphrase }}{{ form.focus_keyphrase.errors }}</div>
+                <div class="field">{{ form.meta_title.label_tag }}{{ form.meta_title }}{{ form.meta_title.errors }}</div>
+                <div class="field">{{ form.slug.label_tag }}{{ form.slug }}{{ form.slug.errors }}<div class="help" id="slugPreview"></div></div>
+                <div class="field">{{ form.meta_description.label_tag }}{{ form.meta_description }}{{ form.meta_description.errors }}</div>
+                <div class="field">{{ form.canonical_url.label_tag }}{{ form.canonical_url }}{{ form.canonical_url.errors }}</div>
+                <div class="field">{{ form.featured_image_alt.label_tag }}{{ form.featured_image_alt }}{{ form.featured_image_alt.errors }}</div>
+                <div class="field">{{ form.robots_index }} {{ form.robots_index.label_tag }} {{ form.robots_follow }} {{ form.robots_follow.label_tag }}</div>
+                <h2>Google Search Preview</h2>
+                <div class="dash-card" style="border-radius: 6px;">
+                    <strong id="googleTitle"></strong>
+                    <div class="help" id="slugPreviewInline">www.inkagrowth.com</div>
+                    <p id="googleDesc" class="muted"></p>
+                </div>
+                <h2>Social Preview</h2>
+                <div class="dash-card" style="border-radius: 6px;">
+                    <strong id="socialTitle"></strong>
+                    <p id="socialDesc" class="muted"></p>
+                </div>
+                <div class="field">{{ form.og_title.label_tag }}{{ form.og_title }}{{ form.og_title.errors }}</div>
+                <div class="field">{{ form.og_description.label_tag }}{{ form.og_description }}{{ form.og_description.errors }}</div>
+                <div class="field">{{ form.twitter_title.label_tag }}{{ form.twitter_title }}{{ form.twitter_title.errors }}</div>
+                <div class="field">{{ form.twitter_description.label_tag }}{{ form.twitter_description }}{{ form.twitter_description.errors }}</div>
+            </div>
+        </div>
+        <aside>
+            {% if post %}
+            <div class="dash-card">
+                <h2>FAQs</h2>
+                {% for faq in faqs %}
+                <div class="check">
+                    <strong>{{ faq.question }}</strong>
+                    <p class="muted">{{ faq.answer }}</p>
+                </div>
+                {% empty %}
+                <p class="muted">No FAQs yet.</p>
+                {% endfor %}
+                <div class="field">
+                    <label for="faq_question">Question</label>
+                    <input class="dashboard-input" id="faq_question" name="faq_question">
+                </div>
+                <div class="field">
+                    <label for="faq_answer">Answer</label>
+                    <textarea class="dashboard-input" id="faq_answer" name="faq_answer"></textarea>
+                </div>
+                <button class="btn light" type="submit" name="action" value="add_faq">Add FAQ</button>
+            </div>
+            {% endif %}
+            <div class="dash-card">
+                <h2>Publish</h2>
+                <div class="field">{{ form.status.label_tag }}{{ form.status }}{{ form.status.errors }}</div>
+                <div class="field">{{ form.published_at.label_tag }}{{ form.published_at }}{{ form.published_at.errors }}</div>
+                <div class="field">{{ form.scheduled_at.label_tag }}{{ form.scheduled_at }}{{ form.scheduled_at.errors }}</div>
+                <button class="btn light" type="submit" name="action" value="draft">Save Draft</button>
+                <button class="btn secondary" type="submit" name="action" value="schedule">Schedule</button>
+                <button class="btn" type="submit" name="action" value="publish">Publish</button>
+            </div>
+            <div class="dash-card">
+                <h2>Post Settings</h2>
+                <div class="field">{{ form.category.label_tag }}{{ form.category }}{{ form.category.errors }}</div>
+                <div class="field">{{ form.tags.label_tag }}{{ form.tags }}{{ form.tags.errors }}</div>
+                <div class="field">{{ form.featured_image.label_tag }}{{ form.featured_image }}{{ form.featured_image.errors }}</div>
+                <div class="field">{{ form.og_image.label_tag }}{{ form.og_image }}{{ form.og_image.errors }}</div>
+                <div class="field">{{ form.twitter_image.label_tag }}{{ form.twitter_image }}{{ form.twitter_image.errors }}</div>
+                <div class="field">{{ form.service.label_tag }}{{ form.service }}</div>
+                <div class="field">{{ form.city.label_tag }}{{ form.city }}</div>
+                <div class="field">{{ form.state.label_tag }}{{ form.state }}</div>
+                <div class="field">{{ form.schema_type.label_tag }}{{ form.schema_type }}</div>
+            </div>
+            <div class="dash-card">
+                <h2>Internal Links</h2>
+                {{ form.internal_links }}{{ form.internal_links.errors }}
+            </div>
+            <div class="dash-card">
+                <h2>Outbound Links</h2>
+                {{ form.outbound_links }}{{ form.outbound_links.errors }}
+            </div>
+            <div class="dash-card">
+                <h2>SEO Score</h2>
+                <p><strong>{% if post %}{{ post.seo_score }}{% else %}0{% endif %}%</strong></p>
+                <div class="checks">{% for check in seo_checks %}<div class="check {{ check.status }}">{{ check.label }}</div>{% empty %}<p class="muted">Save to calculate SEO checks.</p>{% endfor %}</div>
+            </div>
+            <div class="dash-card">
+                <h2>Readability</h2>
+                <p><strong>{% if post %}{{ post.readability_score }}{% else %}0{% endif %}%</strong></p>
+                <div class="checks">{% for check in readability_checks %}<div class="check {{ check.status }}">{{ check.label }}</div>{% empty %}<p class="muted">Save to calculate readability checks.</p>{% endfor %}</div>
+            </div>
+        </aside>
+    </div>
+</form>
+{% endblock %}

@@ -4,11 +4,29 @@ from datetime import date
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db.models import Q
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.html import strip_tags
 from django.utils.text import slugify
 
-from .models import InternalLink, OutboundLink, SEOPage, SEOPageTemplate, contact
+from .forms import CategoryForm, MediaFileForm, PostForm, TagForm
+from .models import (
+    Category,
+    FAQ,
+    InternalLink,
+    MediaFile,
+    OutboundLink,
+    Post,
+    SEOAnalysisResult,
+    SEOPage,
+    SEOPageTemplate,
+    Tag,
+    contact,
+)
 
 
 SITE_URL = "https://www.inkagrowth.com"
@@ -62,6 +80,7 @@ STATIC_FRONTEND_PATHS = {
     "/cookie-policy/",
     "/contact/",
     "/team/",
+    "/blog/",
 }
 
 GLOBAL_FAQS = [
@@ -685,6 +704,38 @@ def page_sitemap_items():
     ]
 
 
+def post_sitemap_items():
+    items = []
+    for post in public_posts().order_by("-published_at"):
+        items.append(
+            {
+                "loc": build_url(f"/{post.slug}/"),
+                "lastmod": (post.updated_at or timezone.now()).date().isoformat(),
+                "changefreq": "weekly",
+                "priority": "0.8",
+            }
+        )
+    for category in Category.objects.filter(is_indexable=True):
+        items.append(
+            {
+                "loc": build_url(f"/category/{category.slug}/"),
+                "lastmod": date.today().isoformat(),
+                "changefreq": "weekly",
+                "priority": "0.5",
+            }
+        )
+    for tag in Tag.objects.filter(is_indexable=True):
+        items.append(
+            {
+                "loc": build_url(f"/tag/{tag.slug}/"),
+                "lastmod": date.today().isoformat(),
+                "changefreq": "weekly",
+                "priority": "0.4",
+            }
+        )
+    return items
+
+
 def service_sitemap_items():
     today = date.today().isoformat()
     service_paths = [
@@ -730,7 +781,7 @@ def sitemap_xml(request):
     )
     today = date.today().isoformat()
 
-    for sitemap_path in ["/sitemap-services.xml", "/sitemap-pages.xml"]:
+    for sitemap_path in ["/sitemap-services.xml", "/sitemap-pages.xml", "/sitemap-posts.xml"]:
         sitemap = SubElement(sitemapindex, "sitemap")
         SubElement(sitemap, "loc").text = build_url(sitemap_path)
         SubElement(sitemap, "lastmod").text = today
@@ -744,6 +795,10 @@ def sitemap_services_xml(request):
 
 def sitemap_pages_xml(request):
     return xml_response(sitemap_urlset(page_sitemap_items()))
+
+
+def sitemap_posts_xml(request):
+    return xml_response(sitemap_urlset(post_sitemap_items()))
 
 
 def ping(request):
@@ -767,6 +822,7 @@ def index(request):
             "https://www.linkedin.com/company/inkagrowth/",
             "https://www.instagram.com/inkagrowth/",
             "https://www.facebook.com/profile.php?id=61574394691962",
+            "https://blog.inkagrowth.com",
         ],
     }
     local_business_schema = {
@@ -786,11 +842,22 @@ def index(request):
         "areaServed": "India",
         "priceRange": "$$",
     }
+    website_schema = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": BRAND_NAME,
+        "url": SITE_URL,
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": f"{SITE_URL}/?s={{search_term_string}}",
+            "query-input": "required name=search_term_string",
+        },
+    }
 
     return render(
         request,
         'index.html',
-        {"faqs": GLOBAL_FAQS, "schema_json": jsonld(organization_schema, local_business_schema, faq_schema())},
+        {"faqs": GLOBAL_FAQS, "schema_json": jsonld(organization_schema, local_business_schema, website_schema, faq_schema())},
     )
 
 
@@ -1007,3 +1074,414 @@ def dynamic_page(request, slug):
         'seo_page.html',
         context
     )
+
+
+def staff_required(user):
+    return user.is_authenticated and user.is_staff
+
+
+def public_posts():
+    now = timezone.now()
+    return Post.objects.filter(
+        status=Post.STATUS_PUBLISHED,
+        robots_index=True,
+    ).filter(Q(published_at__isnull=True) | Q(published_at__lte=now))
+
+
+def post_word_count(content):
+    return word_count(strip_tags(content or ""))
+
+
+def post_reading_time(words):
+    return max(1, round(words / 200))
+
+
+def h_tag_count(content, tag):
+    return len(re.findall(rf"<{tag}\b", content or "", flags=re.IGNORECASE))
+
+
+def link_count(content, internal=True):
+    pattern = r'href=["\']/' if internal else r'href=["\']https?://'
+    return len(re.findall(pattern, content or "", flags=re.IGNORECASE))
+
+
+def first_paragraph_text(content):
+    match = re.search(r"<p[^>]*>(.*?)</p>", content or "", flags=re.IGNORECASE | re.DOTALL)
+    return strip_tags(match.group(1)) if match else strip_tags(content or "")[:300]
+
+
+def score_checks(checks):
+    passed = sum(1 for check in checks if check["status"] == "green")
+    return round((passed / max(len(checks), 1)) * 100)
+
+
+def check_status(ok, warning=False):
+    if ok:
+        return "green"
+    return "orange" if warning else "red"
+
+
+def analyze_post(post):
+    words = post_word_count(post.content)
+    keyphrase = post.focus_keyphrase or ""
+    plain = strip_tags(post.content or "")
+    keyphrase_hits = keyword_count(plain, keyphrase) if keyphrase else 0
+    density = (keyphrase_hits / max(words, 1)) * 100
+    first_para = first_paragraph_text(post.content)
+    h1_count = h_tag_count(post.content, "h1")
+    heading_count = h_tag_count(post.content, "h2") + h_tag_count(post.content, "h3")
+    internal_total = post.internal_links.count() + link_count(post.content, internal=True)
+    outbound_total = post.outbound_links.count() + link_count(post.content, internal=False)
+
+    seo_checks = [
+        {"label": "Focus keyphrase in title", "status": check_status(keyphrase.lower() in post.title.lower())},
+        {"label": "Focus keyphrase in SEO title", "status": check_status(keyphrase.lower() in post.meta_title.lower())},
+        {"label": "Focus keyphrase in meta description", "status": check_status(keyphrase.lower() in post.meta_description.lower())},
+        {"label": "Focus keyphrase in slug", "status": check_status(slugify(keyphrase) in post.slug)},
+        {"label": "Focus keyphrase in first paragraph", "status": check_status(keyphrase.lower() in first_para.lower())},
+        {"label": "Focus keyphrase in image alt", "status": check_status(keyphrase.lower() in post.featured_image_alt.lower())},
+        {"label": "Keyphrase density 0.8% to 2%", "status": check_status(0.8 <= density <= 2)},
+        {"label": "Minimum 700 words", "status": check_status(words >= 700)},
+        {"label": "SEO title 50-60 characters", "status": check_status(50 <= len(post.meta_title) <= 60)},
+        {"label": "Meta description 140-160 characters", "status": check_status(140 <= len(post.meta_description) <= 160)},
+        {"label": "Minimum 4 internal links", "status": check_status(internal_total >= 4)},
+        {"label": "Minimum 4 outbound links", "status": check_status(outbound_total >= 4)},
+        {"label": "Minimum 4 H2/H3 headings", "status": check_status(heading_count >= 4)},
+        {"label": "No multiple H1 tags in content", "status": check_status(h1_count <= 1)},
+        {"label": "Canonical URL exists", "status": check_status(bool(post.canonical_url))},
+        {"label": "Featured image exists", "status": check_status(bool(post.featured_image_id))},
+        {"label": "FAQ exists", "status": check_status(post.faqs.exists(), warning=True)},
+        {"label": "Schema generated", "status": "green"},
+        {"label": "Published content is indexable", "status": check_status(post.robots_index if post.status == Post.STATUS_PUBLISHED else True)},
+    ]
+
+    sentences = [part.strip() for part in re.split(r"[.!?]+", plain) if part.strip()]
+    long_sentences = [sentence for sentence in sentences if word_count(sentence) > 25]
+    paragraphs = re.findall(r"<p[^>]*>(.*?)</p>", post.content or "", flags=re.IGNORECASE | re.DOTALL)
+    long_paragraphs = [paragraph for paragraph in paragraphs if word_count(strip_tags(paragraph)) > 120]
+    starts = [sentence.split()[0].lower() for sentence in sentences if sentence.split()]
+    repetitive_starts = len(starts) - len(set(starts))
+    readability_checks = [
+        {"label": "Transition words above 15%", "status": check_status(transition_word_percentage(plain) > 15)},
+        {"label": "Passive voice low", "status": "orange"},
+        {"label": "Paragraphs not too long", "status": check_status(not long_paragraphs)},
+        {"label": "Sentences not too long", "status": check_status(len(long_sentences) <= max(2, len(sentences) // 4))},
+        {"label": "No repetitive sentence starts", "status": check_status(repetitive_starts <= 3, warning=True)},
+        {"label": "Subheading distribution good", "status": check_status(heading_count >= 4)},
+        {"label": "Simple vocabulary", "status": "green"},
+        {"label": "Minimum 700 words", "status": check_status(words >= 700)},
+    ]
+
+    seo_score = score_checks(seo_checks)
+    readability_score = score_checks(readability_checks)
+    post.word_count = words
+    post.reading_time = post_reading_time(words)
+    post.seo_score = seo_score
+    post.readability_score = readability_score
+    return seo_checks, readability_checks, seo_score, readability_score
+
+
+def save_post_analysis(post):
+    seo_checks, readability_checks, seo_score, readability_score = analyze_post(post)
+    post.save(update_fields=("word_count", "reading_time", "seo_score", "readability_score", "updated_at"))
+    SEOAnalysisResult.objects.update_or_create(
+        post=post,
+        defaults={
+            "seo_checks": seo_checks,
+            "readability_checks": readability_checks,
+            "seo_score": seo_score,
+            "readability_score": readability_score,
+        },
+    )
+    return seo_checks, readability_checks
+
+
+def post_schema(post, canonical):
+    faqs = list(post.faqs.all())
+    image_url = build_url(post.featured_image.file.url) if post.featured_image_id and post.featured_image.file.url.startswith("/") else (
+        post.featured_image.file.url if post.featured_image_id else build_url("/static/img/logo.png")
+    )
+    schemas = [
+        {
+            "@context": "https://schema.org",
+            "@type": post.schema_type or "BlogPosting",
+            "headline": post.title,
+            "description": post.meta_description,
+            "url": canonical,
+            "datePublished": post.published_at.isoformat() if post.published_at else None,
+            "dateModified": post.updated_at.isoformat(),
+            "author": {"@type": "Person", "name": post.author.get_full_name() or post.author.username},
+            "publisher": {"@type": "Organization", "name": BRAND_NAME, "logo": build_url("/static/img/logo.png")},
+            "image": image_url,
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": BRAND_NAME,
+            "url": SITE_URL,
+            "logo": build_url("/static/img/logo.png"),
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL},
+                {"@type": "ListItem", "position": 2, "name": "Blog", "item": build_url("/blog/")},
+                {"@type": "ListItem", "position": 3, "name": post.title, "item": canonical},
+            ],
+        },
+    ]
+    if faqs:
+        schemas.append(
+            {
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": faq.question,
+                        "acceptedAnswer": {"@type": "Answer", "text": faq.answer},
+                    }
+                    for faq in faqs
+                ],
+            }
+        )
+    return jsonld(*schemas)
+
+
+def content_headings(content):
+    headings = []
+    for index, match in enumerate(re.finditer(r"<h([23])[^>]*>(.*?)</h\1>", content or "", flags=re.IGNORECASE | re.DOTALL), start=1):
+        text = strip_tags(match.group(2))
+        headings.append({"id": f"section-{index}", "level": match.group(1), "text": text})
+    return headings
+
+
+def post_suggestions(focus_keyphrase):
+    slug = slugify(focus_keyphrase)
+    title = f"{focus_keyphrase} | INKAGROWTH"
+    description = (
+        f"{focus_keyphrase} helps local businesses grow online with SEO, social media, ads, branding, "
+        f"lead generation, and websites."
+    )
+    return {
+        "slug": slug,
+        "meta_title": title[:60],
+        "meta_description": description[:160],
+        "first_paragraph": (
+            f"{focus_keyphrase} is easier to plan when the page explains the service, location, benefits, and next steps clearly."
+        ),
+        "outline": [
+            f"Why {focus_keyphrase} Matters",
+            f"Benefits of {focus_keyphrase}",
+            "How INKAGROWTH Builds the Strategy",
+            "Getting Started",
+        ],
+        "faqs": [
+            f"What is included in {focus_keyphrase}?",
+            f"How long does {focus_keyphrase} take to show results?",
+            f"How much does {focus_keyphrase} cost?",
+            "How can I contact INKAGROWTH?",
+        ],
+        "image_alt": focus_keyphrase,
+    }
+
+
+@user_passes_test(staff_required)
+def dashboard_posts(request):
+    posts = Post.objects.select_related("category", "author").all()
+    return render(request, "dashboard/posts/list.html", {"posts": posts})
+
+
+@user_passes_test(staff_required)
+def dashboard_post_create(request):
+    if request.method == "POST":
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            if not post.canonical_url:
+                post.canonical_url = build_url(f"/{post.slug}/")
+            post.save()
+            form.save_m2m()
+            save_post_analysis(post)
+            messages.success(request, "Post saved successfully.")
+            return redirect("dashboard_post_edit", post.id)
+    else:
+        focus = request.GET.get("focus", "")
+        initial = post_suggestions(focus) if focus else {}
+        form = PostForm(initial=initial)
+    return render(request, "dashboard/posts/form.html", {"form": form, "post": None, "suggestions": post_suggestions(request.GET.get("focus", "")) if request.GET.get("focus") else None})
+
+
+@user_passes_test(staff_required)
+def dashboard_post_edit(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == "POST":
+        if request.POST.get("action") == "add_faq":
+            question = request.POST.get("faq_question", "").strip()
+            answer = request.POST.get("faq_answer", "").strip()
+            if question and answer:
+                FAQ.objects.create(post=post, question=question, answer=answer, sort_order=post.faqs.count() + 1)
+                save_post_analysis(post)
+                messages.success(request, "FAQ added.")
+            else:
+                messages.error(request, "FAQ question and answer are required.")
+            return redirect("dashboard_post_edit", post.id)
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+            if not post.canonical_url:
+                post.canonical_url = build_url(f"/{post.slug}/")
+            post.save()
+            form.save_m2m()
+            save_post_analysis(post)
+            messages.success(request, "Post updated successfully.")
+            return redirect("dashboard_post_edit", post.id)
+    else:
+        form = PostForm(instance=post)
+    seo_checks, readability_checks, _, _ = analyze_post(post)
+    return render(
+        request,
+        "dashboard/posts/form.html",
+        {"form": form, "post": post, "seo_checks": seo_checks, "readability_checks": readability_checks, "faqs": post.faqs.all()},
+    )
+
+
+@user_passes_test(staff_required)
+def dashboard_post_faq_delete(request, pk, faq_id):
+    post = get_object_or_404(Post, pk=pk)
+    faq = get_object_or_404(FAQ, pk=faq_id, post=post)
+    if request.method == "POST":
+        faq.delete()
+        save_post_analysis(post)
+        messages.success(request, "FAQ deleted.")
+    return redirect("dashboard_post_edit", post.id)
+
+
+@user_passes_test(staff_required)
+def dashboard_post_preview(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    return render_post_detail(request, post, preview=True)
+
+
+@user_passes_test(staff_required)
+def dashboard_post_delete(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == "POST":
+        post.delete()
+        messages.success(request, "Post deleted.")
+        return redirect("dashboard_posts")
+    return render(request, "dashboard/posts/delete.html", {"post": post})
+
+
+@user_passes_test(staff_required)
+def dashboard_post_duplicate(request, pk):
+    source = get_object_or_404(Post, pk=pk)
+    source.pk = None
+    source.slug = f"{source.slug}-copy"
+    source.title = f"{source.title} Copy"
+    source.status = Post.STATUS_DRAFT
+    source.published_at = None
+    source.save()
+    messages.success(request, "Post duplicated as a draft.")
+    return redirect("dashboard_post_edit", source.id)
+
+
+@user_passes_test(staff_required)
+def dashboard_media(request):
+    if request.method == "POST":
+        form = MediaFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            media = form.save(commit=False)
+            media.uploaded_by = request.user
+            media.save()
+            messages.success(request, "Media uploaded.")
+            return redirect("dashboard_media")
+    else:
+        form = MediaFileForm()
+    media_files = MediaFile.objects.all()
+    return render(request, "dashboard/posts/media.html", {"form": form, "media_files": media_files})
+
+
+@user_passes_test(staff_required)
+def dashboard_categories(request):
+    if request.method == "POST":
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Category saved.")
+            return redirect("dashboard_categories")
+    else:
+        form = CategoryForm()
+    return render(request, "dashboard/posts/taxonomy.html", {"form": form, "items": Category.objects.all(), "title": "Categories"})
+
+
+@user_passes_test(staff_required)
+def dashboard_tags(request):
+    if request.method == "POST":
+        form = TagForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Tag saved.")
+            return redirect("dashboard_tags")
+    else:
+        form = TagForm()
+    return render(request, "dashboard/posts/taxonomy.html", {"form": form, "items": Tag.objects.all(), "title": "Tags"})
+
+
+def blog_index(request):
+    posts = public_posts().select_related("category", "author").prefetch_related("tags")
+    return render(request, "post_list.html", {"posts": posts, "canonical": build_url("/blog/")})
+
+
+def post_category(request, slug):
+    category = get_object_or_404(Category, slug=slug, is_indexable=True)
+    posts = public_posts().filter(category=category).select_related("category", "author")
+    return render(request, "post_list.html", {"posts": posts, "category": category, "canonical": build_url(f"/category/{slug}/")})
+
+
+def post_tag(request, slug):
+    tag = get_object_or_404(Tag, slug=slug, is_indexable=True)
+    posts = public_posts().filter(tags=tag).select_related("category", "author")
+    return render(request, "post_list.html", {"posts": posts, "tag": tag, "canonical": build_url(f"/tag/{slug}/")})
+
+
+def render_post_detail(request, post, preview=False):
+    canonical = post.canonical_url or build_url(f"/{post.slug}/")
+    related_posts = public_posts().exclude(pk=post.pk).filter(category=post.category)[:3]
+    featured_image_url = ""
+    if post.featured_image_id:
+        featured_image_url = build_url(post.featured_image.file.url) if post.featured_image.file.url.startswith("/") else post.featured_image.file.url
+    og_image_url = ""
+    if post.og_image_id:
+        og_image_url = build_url(post.og_image.file.url) if post.og_image.file.url.startswith("/") else post.og_image.file.url
+    twitter_image_url = ""
+    if post.twitter_image_id:
+        twitter_image_url = build_url(post.twitter_image.file.url) if post.twitter_image.file.url.startswith("/") else post.twitter_image.file.url
+    context = {
+        "post": post,
+        "preview": preview,
+        "canonical": canonical,
+        "related_posts": related_posts,
+        "headings": content_headings(post.content),
+        "featured_image_url": featured_image_url,
+        "og_image_url": og_image_url or featured_image_url or build_url("/static/img/logo.png"),
+        "twitter_image_url": twitter_image_url or featured_image_url or build_url("/static/img/logo.png"),
+        "schema_json": post_schema(post, canonical),
+        "seo_checks": analyze_post(post)[0],
+        "readability_checks": analyze_post(post)[1],
+    }
+    return render(request, "post_detail.html", context)
+
+
+def post_detail(request, slug):
+    post = get_object_or_404(public_posts().select_related("category", "author", "featured_image"), slug=slug)
+    return render_post_detail(request, post)
+
+
+def dynamic_content_detail(request, slug):
+    post = public_posts().filter(slug=slug).first()
+    if post:
+        return render_post_detail(request, post)
+    return dynamic_page(request, slug)

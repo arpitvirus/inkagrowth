@@ -41,6 +41,12 @@ urlpatterns = [
         name="sitemap_pages"
     ),
 
+    path(
+        "sitemap-posts.xml",
+        front_views.sitemap_posts_xml,
+        name="sitemap_posts"
+    ),
+
 path("ping/", front_views.ping),
 
 path(
@@ -132,6 +138,84 @@ path(
         'team/',
         front_views.team_page,
         name='team'
+    ),
+
+    path(
+        'blog/',
+        front_views.blog_index,
+        name='blog_index'
+    ),
+
+    path(
+        'category/<slug:slug>/',
+        front_views.post_category,
+        name='post_category'
+    ),
+
+    path(
+        'tag/<slug:slug>/',
+        front_views.post_tag,
+        name='post_tag'
+    ),
+
+    path(
+        'dashboard/posts/',
+        front_views.dashboard_posts,
+        name='dashboard_posts'
+    ),
+
+    path(
+        'dashboard/posts/create/',
+        front_views.dashboard_post_create,
+        name='dashboard_post_create'
+    ),
+
+    path(
+        'dashboard/posts/edit/<int:pk>/',
+        front_views.dashboard_post_edit,
+        name='dashboard_post_edit'
+    ),
+
+    path(
+        'dashboard/posts/preview/<int:pk>/',
+        front_views.dashboard_post_preview,
+        name='dashboard_post_preview'
+    ),
+
+    path(
+        'dashboard/posts/delete/<int:pk>/',
+        front_views.dashboard_post_delete,
+        name='dashboard_post_delete'
+    ),
+
+    path(
+        'dashboard/posts/edit/<int:pk>/faq/<int:faq_id>/delete/',
+        front_views.dashboard_post_faq_delete,
+        name='dashboard_post_faq_delete'
+    ),
+
+    path(
+        'dashboard/posts/duplicate/<int:pk>/',
+        front_views.dashboard_post_duplicate,
+        name='dashboard_post_duplicate'
+    ),
+
+    path(
+        'dashboard/posts/media/',
+        front_views.dashboard_media,
+        name='dashboard_media'
+    ),
+
+    path(
+        'dashboard/posts/categories/',
+        front_views.dashboard_categories,
+        name='dashboard_categories'
+    ),
+
+    path(
+        'dashboard/posts/tags/',
+        front_views.dashboard_tags,
+        name='dashboard_tags'
     ),
 
 
@@ -396,8 +480,8 @@ path(
     # Otherwise it will capture all CRM URLs.
     path(
         '<slug:slug>/',
-        front_views.dynamic_page,
-        name='dynamic_page'
+        front_views.dynamic_content_detail,
+        name='post_detail'
     ),
 
 ]

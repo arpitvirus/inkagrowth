@@ -1,0 +1,13 @@
+{% extends "dashboard/posts/base.html" %}
+{% block title %}Delete Post | INKAGROWTH{% endblock %}
+{% block content %}
+<div class="dash-card">
+    <h1>Delete Post</h1>
+    <p>Delete <strong>{{ post.title }}</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn" type="submit">Delete</button>
+        <a class="btn light" href="{% url 'dashboard_post_edit' post.id %}">Cancel</a>
+    </form>
+</div>
+{% endblock %}
