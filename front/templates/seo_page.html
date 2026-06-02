@@ -962,7 +962,7 @@
     <nav class="navbar">
         <div class="container nav-container">
             <a href="/" class="">
-                <img src="{% static 'img/inka_logo_transparent.png' %}" alt="Inkagrowth Logo"
+                <img src="{% static 'img/inka_logo_transparent.png' %}" alt="{{service}} agency in {{city}}"
                     style="width: 120px; height: 50px">
             </a>
             <button class="menu-toggle" id="mobileMenuToggle" aria-label="Menu">
@@ -992,9 +992,8 @@
         <div class="hero-bg-motion"></div>
         <div class="container hero-grid">
             <div class="hero-content fade-up">
-                <h1>Grow Your Business with <span class="glow-text">inkaGROWTH</span></h1>
-                <p style="font-size: 1.2rem; color: #3a3a3a; margin-bottom: 32px;">We help brands scale with data-driven
-                    marketing strategies</p>
+                <h1>{{h1}}</h1>
+                <p style="font-size: 1.2rem; color: #3a3a3a; margin-bottom: 32px;">{{hero_subheadline}}</p>
                 <a href="#contact-form" class="btn-primary">Get Free Consultation <i class="fas fa-arrow-right"
                         style="margin-left: 8px;"></i></a>
             </div>
@@ -1028,12 +1027,12 @@
             <div class="about-grid">
                 <div class="about-img slide-left">
                     <!-- ✅ ALT text uses focus keyword -->
-                    <img src="{{ image_url }}" alt="{{service}} in {{city}} — inkaGROWTH team" loading="lazy">
+                    <img src="{{ image_url }}" alt="{{service}} in {{city}}" loading="lazy">
                 </div>
                 <div class="about-text slide-right">
                     <div class="tag">Introduction</div>
                     <!-- ✅ H2 contains keyword -->
-                    <h2>Why {{city}} Businesses Need {{service}}</h2>
+                    <h2>Why Businesses Need {{service}} in {{city}}</h2>
                     <!-- ✅ Focus keyword in first 100 words, natural use of transition words -->
                     <p style="font-size: 1.1rem; margin-bottom: 20px; color: #2c2c2e;" id="intro-para-1">
                         {{intro_para_1}}
@@ -1043,15 +1042,31 @@
                     </p>
                     <!-- ✅ Internal links -->
                     <p style="color: #4a4a4a;">
-                        Whether you are looking for
-                        <a href="/seo-services/" class="inline-link">professional SEO services</a>,
-                        a <a href="/website-development/" class="inline-link">high-converting website</a>,
-                        or a full-scale digital strategy — inkaGROWTH has the expertise to make it happen.
-                        <a href="/contact/" class="inline-link">Reach out today</a> and let's build your growth story
-                        together.
+                        In addition, you can explore related INKAGROWTH resources such as
+                        {% for link in internal_links %}
+                        <a href="{{link.url}}" class="inline-link">{{link.title}}</a>{% if not forloop.last %}, {% else %}.{% endif %}
+                        {% endfor %}
+                        These links help you compare services without repeating the same anchor text.
                     </p>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <section id="seo-content">
+        <div class="container">
+            {% for section in content_sections %}
+            <div class="fade-up" style="max-width: 860px; margin-bottom: 48px;">
+                {% if section.heading_level == "h3" %}
+                <h3>{{section.heading}}</h3>
+                {% else %}
+                <h2>{{section.heading}}</h2>
+                {% endif %}
+                {% for paragraph in section.paragraphs %}
+                <p style="color: #4a4a4a; line-height: 1.8; margin-bottom: 18px;">{{paragraph}}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
         </div>
     </section>
 
@@ -1205,23 +1220,42 @@
                 </p>
                 <p class="fade-up" style="color: #4a4a4a; margin-bottom: 32px; line-height: 1.8;">
                     However, quality service does not stop at city borders. We actively work with clients from
-                    Moradabad,
-                    Sambhal, Badaun, Bhajoi, and beyond — because every business in {{state}} deserves world-class
-                    <a href="/seo-services/" class="inline-link">SEO</a> and
-                    <a href="/website-development/" class="inline-link">web development</a> support.
+                    {% for area in nearby_areas %}{{area.name}}{% if not forloop.last %}, {% endif %}{% endfor %}, and beyond — because every business in {{state}} deserves world-class
+                    {{service}} support.
                     Finally, if you want to dominate local search results and outrank your competition, we are ready.
                 </p>
                 <!-- ✅ H3 for internal linking section -->
                 <h3 class="fade-up" style="margin-bottom: 16px;">Areas We Serve in {{state}}</h3>
                 <div class="areas-flex fade-up" id="nearby-areas">
-                    <!-- Dynamically populated via JS / server template from {{nearby_areas}} -->
-                    <a href="/digital-marketing-in-moradabad" class="area-pill">Moradabad</a>
-                    <a href="/seo-services-in-sambhal" class="area-pill">Sambhal</a>
-                    <a href="/website-development-in-bhajoi" class="area-pill">Bhajoi</a>
-                    <a href="/social-media-marketing-in-badaun" class="area-pill">Badaun</a>
-                    <a href="/digital-marketing-in-chandausi" class="area-pill">Chandausi</a>
-                    <a href="/seo-services-in-amroha" class="area-pill">Amroha</a>
+                    {% for area in nearby_areas %}
+                    {% if area.url %}
+                    <a href="{{area.url}}" class="area-pill">{{area.name}}</a>
+                    {% else %}
+                    <span class="area-pill">{{area.name}}</span>
+                    {% endif %}
+                    {% endfor %}
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="authority-links" class="section-alt">
+        <div class="container">
+            <h2 class="fade-up">Trusted Resources for {{service}} in {{city}}</h2>
+            <p class="section-subhead fade-up">
+                Moreover, we align our work with reliable platform guidance and measurement tools.
+            </p>
+            <div class="services-grid stagger-container">
+                {% for link in outbound_links %}
+                <div class="service-card stagger-item">
+                    <i class="fas fa-up-right-from-square icon-red"></i>
+                    <h3>{{link.title}}</h3>
+                    <p style="color: #555; line-height: 1.7;">
+                        Learn from <a href="{{link.url}}" class="inline-link" target="_blank" rel="noopener noreferrer">{{link.title}}</a>
+                        while planning smarter digital growth decisions.
+                    </p>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -1243,7 +1277,7 @@
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <img src="https://randomuser.me/api/portraits/women/44.jpg"
                             style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;"
-                            alt="Client testimonial avatar" loading="lazy">
+                            alt="{{service}} agency in {{city}}" loading="lazy">
                         <div><strong>Nina Chen</strong><br><span style="font-size: 0.8rem;">CMO, Vektra Labs</span>
                         </div>
                     </div>
@@ -1256,7 +1290,7 @@
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <img src="https://randomuser.me/api/portraits/men/32.jpg"
                             style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;"
-                            alt="Client testimonial avatar" loading="lazy">
+                            alt="{{service}} agency in {{city}}" loading="lazy">
                         <div><strong>Marcus Thorne</strong><br><span style="font-size: 0.8rem;">Founder, Studio
                                 Omni</span></div>
                     </div>
@@ -1270,7 +1304,7 @@
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <img src="https://randomuser.me/api/portraits/women/68.jpg"
                             style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;"
-                            alt="Client testimonial avatar" loading="lazy">
+                            alt="{{service}} agency in {{city}}" loading="lazy">
                         <div><strong>Sophia Ramirez</strong><br><span style="font-size: 0.8rem;">Head of Growth,
                                 Lune</span></div>
                     </div>
@@ -1284,11 +1318,11 @@
         <div class="container clients-strip fade-up">
             <p style="color: #444242; font-weight: 500;">Tools we use to grow your business</p>
             <div class="client-logos">
-                <img src="https://cdn.simpleicons.org/meta" alt="Meta Ads" style="height: 40px;">
-                <img src="https://cdn.simpleicons.org/wordpress" alt="WordPress" style="height: 40px;">
-                <img src="https://cdn.simpleicons.org/googleanalytics" alt="Google Analytics" style="height: 40px;">
-                <img src="https://cdn.simpleicons.org/googleads" alt="Google Ads" style="height: 40px;">
-                <img src="https://cdn.simpleicons.org/figma" alt="Figma" style="height: 40px;">
+                <img src="https://cdn.simpleicons.org/meta" alt="{{service}} agency in {{city}}" style="height: 40px;" loading="lazy">
+                <img src="https://cdn.simpleicons.org/wordpress" alt="{{service}} agency in {{city}}" style="height: 40px;" loading="lazy">
+                <img src="https://cdn.simpleicons.org/googleanalytics" alt="{{service}} agency in {{city}}" style="height: 40px;" loading="lazy">
+                <img src="https://cdn.simpleicons.org/googleads" alt="{{service}} agency in {{city}}" style="height: 40px;" loading="lazy">
+                <img src="https://cdn.simpleicons.org/figma" alt="{{service}} agency in {{city}}" style="height: 40px;" loading="lazy">
             </div>
         </div>
     </center>
@@ -1304,85 +1338,17 @@
                 Everything you need to know before partnering with inkaGROWTH for {{service}} services.
             </p>
             <div class="faq-list fade-up" id="faq-list">
-                <!-- FAQ items — populated dynamically from {{faqs}} or use these defaults -->
+                {% for faq in faqs %}
                 <div class="faq-item">
                     <button class="faq-question" aria-expanded="false">
-                        Why should businesses in {{city}} invest in {{service}}?
+                        {{faq.question}}
                         <i class="fas fa-plus faq-icon"></i>
                     </button>
                     <div class="faq-answer" role="region">
-                        <p>Businesses in {{city}} need {{service}} to stay competitive online. With more consumers
-                            searching
-                            locally, a strong digital presence ensures your brand reaches the right audience at the
-                            right time —
-                            therefore driving more leads, more calls, and more revenue. Additionally, early movers in
-                            {{city}}'s
-                            growing digital market gain a significant long-term competitive advantage.</p>
+                        <p>{{faq.answer}}</p>
                     </div>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        How much does {{service}} cost in {{city}}?
-                        <i class="fas fa-plus faq-icon"></i>
-                    </button>
-                    <div class="faq-answer" role="region">
-                        <p>The cost of {{service}} in {{city}} depends on your business goals, competition level, and
-                            scope
-                            of work. However, inkaGROWTH offers affordable monthly packages with transparent,
-                            no-hidden-fee
-                            pricing. We believe every {{city}} business deserves premium marketing — without breaking
-                            the bank.
-                            <a href="/contact/" class="inline-link">Contact us</a> for a free personalised quote.
-                        </p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        How long does it take to see results from {{service}} in {{city}}?
-                        <i class="fas fa-plus faq-icon"></i>
-                    </button>
-                    <div class="faq-answer" role="region">
-                        <p>For SEO-based services, businesses typically begin to see measurable improvements within 3–6
-                            months.
-                            Paid advertising campaigns can deliver results much faster — often within the first few
-                            weeks.
-                            Meanwhile, social media marketing builds brand awareness steadily over time. We provide
-                            transparent
-                            monthly reports so you always know where your investment is going.</p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        Does inkaGROWTH serve businesses outside {{city}}?
-                        <i class="fas fa-plus faq-icon"></i>
-                    </button>
-                    <div class="faq-answer" role="region">
-                        <p>Yes. While we specialise in {{service}} for businesses in {{city}}, we furthermore serve
-                            clients
-                            across {{state}} — including Moradabad, Sambhal, Badaun, and Bhajoi. Our team works remotely
-                            and
-                            delivers premium results regardless of location. Explore our
-                            <a href="/seo-services/" class="inline-link">SEO services</a> and
-                            <a href="/website-development/" class="inline-link">web development</a> pages to learn
-                            more.
-                        </p>
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" aria-expanded="false">
-                        What makes inkaGROWTH different from other {{service}} agencies in {{city}}?
-                        <i class="fas fa-plus faq-icon"></i>
-                    </button>
-                    <div class="faq-answer" role="region">
-                        <p>Unlike generic agencies, inkaGROWTH combines data-driven strategies with bold creative.
-                            Instead of copy-paste campaigns, we build custom strategies for each client. Our clients
-                            have seen
-                            average ROI increases of 315% within 6 months. Finally, we back every campaign with
-                            transparent
-                            reporting, dedicated support, and a genuine commitment to your growth in {{city}} and
-                            beyond.</p>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -1430,7 +1396,7 @@
                 </div>
                 <div class="form-image">
                     <!-- ✅ ALT text with focus keyword -->
-                    <img src="{% static 'img/contact2.png' %}" alt="{{service}} consultation team in {{city}}"
+                    <img src="{% static 'img/contact2.png' %}" alt="{{service}} agency in {{city}}"
                         loading="lazy">
                 </div>
             </div>
@@ -1442,7 +1408,7 @@
     <!-- Floating WhatsApp Button -->
     <div class="whatsapp-float">
         <a href="https://wa.me/919389826074?text=Hello!%20I'm%20interested%20in%20{{service}}%20services%20in%20{{city}}"
-            target="_blank" aria-label="Chat on WhatsApp">
+            target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
             <i class="fab fa-whatsapp"></i>
         </a>
     </div>

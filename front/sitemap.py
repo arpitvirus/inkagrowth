@@ -1,5 +1,5 @@
 from django.contrib.sitemaps import Sitemap
-from .models import SEOPage
+from .models import SEOPageTemplate
 
 class StaticSitemap(Sitemap):
     priority = 1.0
@@ -17,7 +17,7 @@ class SEOPageSitemap(Sitemap):
     changefreq = "daily"
 
     def items(self):
-        return SEOPage.objects.all()
+        return SEOPageTemplate.objects.filter(is_published=True)
 
     def location(self, obj):
         return f'/{obj.slug}/'
