@@ -7,9 +7,11 @@
     <title>{{ page.title }}</title>
     <meta name="description" content="{{ page.description }}">
     <meta name="robots" content="index, follow">
-    <meta name="author" content="InkaGROWTH">
+    <meta name="author" content="INKAGROWTH">
     <link rel="canonical" href="{{ canonical }}">
-    <link rel="icon" href="{% static 'img/logo.png' %}" type="image/png">
+    <link rel="icon" href="{% static 'img/logo.png' %}" sizes="48x48" type="image/png">
+    <link rel="shortcut icon" href="{% static 'img/logo.png' %}" type="image/png">
+    <link rel="apple-touch-icon" href="{% static 'img/logo.png' %}">
     <meta property="og:type" content="website">
     <meta property="og:title" content="{{ page.title }}">
     <meta property="og:description" content="{{ page.description }}">
@@ -20,6 +22,8 @@
     <meta name="twitter:description" content="{{ page.description }}">
     <meta name="twitter:image" content="https://www.inkagrowth.com/static/img/logo.png">
     <script type="application/ld+json">{{ schema_json|safe }}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -27,11 +31,6 @@
         body { font-family: 'Inter', sans-serif; color: #111111; background: #ffffff; line-height: 1.6; }
         :root { --red:#d43c32; --red-dark:#b22f26; --gray-border:#e9e9ef; --gray-light:#f5f5f7; }
         .container { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
-        .navbar { position: sticky; top: 0; background: rgba(255,255,255,.92); backdrop-filter: blur(12px); z-index: 1000; border-bottom: 1px solid var(--gray-border); padding: 18px 0; }
-        .nav-container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
-        .nav-links { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
-        .nav-links a { text-decoration: none; color: #111111; font-weight: 500; }
-        .nav-links a:hover { color: var(--red); }
         .btn-primary, .submit-btn { display: inline-block; background: var(--red); color: #ffffff !important; font-weight: 600; padding: 14px 32px; border-radius: 40px; text-decoration: none; border: 0; cursor: pointer; font-size: 1rem; }
         .btn-primary:hover, .submit-btn:hover { background: var(--red-dark); }
         .hero { padding: 82px 0; background: linear-gradient(135deg, #ffffff 0%, #fffcfc 100%); }
@@ -53,24 +52,12 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container nav-container">
-            <a href="/"><img src="{% static 'img/inka_logo_transparent.png' %}" alt="InkaGROWTH Logo" style="width: 120px; height: 50px"></a>
-            <div class="nav-links">
-                <a href="/#services">Services</a>
-                <a href="/#about">About</a>
-                <a href="/#about">About</a>
-                <a href="https://blog.inkagrowth.com">Blog</a>
-                <a href="/contact/">Contact</a>
-                <a href="tel:+919389826074" class="btn-primary" style="padding: 10px 24px; font-size: .9rem;">Get Free Quote</a>
-            </div>
-        </div>
-    </nav>
+    {% include "front/partials/header.html" %}
     <section class="hero">
         <div class="container hero-grid">
             <div>
-                <h1>Contact InkaGROWTH</h1>
-                <p>Talk to our digital marketing team about SEO, social media marketing, Google Ads, website development, and growth strategy.</p>
+                <h1>Contact INKAGROWTH</h1>
+                <p>Talk to the official INKAGROWTH digital marketing team about SEO, social media marketing, Google Ads, website development, branding, and growth strategy.</p>
             </div>
             <div class="contact-card">
                 <h2>Contact Details</h2>

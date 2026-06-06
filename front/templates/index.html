@@ -3,20 +3,20 @@
 <html lang="en">
 
 <head>
-    <link rel="icon" href="/static/img/logo.png" sizes="48x48" type="image/png">
-    <link rel="shortcut icon" href="/static/img/logo.png" type="image/png">
-    <link rel="apple-touch-icon" href="/static/img/logo.png">
+    <link rel="icon" href="{% static 'img/logo.png' %}" sizes="48x48" type="image/png">
+    <link rel="shortcut icon" href="{% static 'img/logo.png' %}" type="image/png">
+    <link rel="apple-touch-icon" href="{% static 'img/logo.png' %}">
 
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-    <title>INKAGROWTH | Digital Marketing Agency in Chandausi</title>
+    <title>INKAGROWTH | Official Digital Marketing Agency in Chandausi</title>
 
     <meta name="description"
-        content="INKAGROWTH is a digital marketing agency helping businesses grow with SEO, social media marketing, Meta Ads, branding, lead generation, and websites.">
+        content="INKAGROWTH is the official digital marketing agency in Chandausi founded by Arpit Kumar, helping businesses grow with SEO, websites, social media, ads, branding, and leads.">
 
-    <meta name="keywords" content="SEO Services, Digital Marketing Agency, Website Development, Google Ads, InkaGrowth">
+    <meta name="keywords" content="INKAGROWTH, Inka Growth, inkagrowth agency, inkagrowth digital marketing, inkagrowth chandausi">
 
     <meta name="author" content="InkaGROWTH">
 
@@ -27,9 +27,9 @@
 
     <link rel="canonical" href="https://www.inkagrowth.com/">
 
-    <meta property="og:title" content="INKAGROWTH | Digital Marketing Agency in Chandausi">
+    <meta property="og:title" content="INKAGROWTH | Official Digital Marketing Agency in Chandausi">
 
-    <meta property="og:description" content="INKAGROWTH helps businesses grow with SEO, social media marketing, Meta Ads, branding, lead generation, and websites.">
+    <meta property="og:description" content="INKAGROWTH is the official Chandausi digital marketing agency for SEO, websites, social media, ads, branding, and lead generation.">
     <meta property="og:url" content="https://www.inkagrowth.com/">
 
     <meta property="og:image" content="https://www.inkagrowth.com/static/img/logo.png">
@@ -37,12 +37,14 @@
     <meta property="og:type" content="website">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="INKAGROWTH | Digital Marketing Agency in Chandausi">
-    <meta name="twitter:description" content="SEO, social media marketing, Meta Ads, branding, lead generation, and website development for growing businesses.">
+    <meta name="twitter:title" content="INKAGROWTH | Official Digital Marketing Agency in Chandausi">
+    <meta name="twitter:description" content="Official INKAGROWTH website for SEO, social media marketing, ads, branding, lead generation, and website development.">
     <meta name="twitter:image" content="https://www.inkagrowth.com/static/img/logo.png">
 
     <script type="application/ld+json">{{ schema_json|safe }}</script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
         rel="stylesheet">
@@ -132,70 +134,6 @@
             background-color: var(--red-dark);
             transform: scale(1.02);
             box-shadow: 0 12px 24px rgba(212, 60, 50, 0.3);
-        }
-
-        /* Navbar */
-        .navbar {
-            position: sticky;
-            top: 0;
-            background-color: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(12px);
-            z-index: 1000;
-            border-bottom: 1px solid var(--gray-border);
-            padding: 18px 0;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 800;
-            font-size: 1.8rem;
-            letter-spacing: -0.02em;
-            color: var(--black);
-            text-decoration: none;
-        }
-
-        /* Desktop navigation links */
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--black);
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .nav-links a:hover {
-            color: var(--red);
-        }
-
-        /* Mobile menu button (hidden on desktop) */
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: var(--black);
-            transition: color 0.2s;
-        }
-
-        .menu-toggle:hover {
-            color: var(--red);
         }
 
         /* Cards */
@@ -806,31 +744,6 @@
                 flex-direction: column;
             }
 
-            /* Show hamburger, hide nav-links initially */
-            .menu-toggle {
-                display: block;
-            }
-
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-                gap: 20px;
-                padding: 20px 0 10px;
-                background-color: rgba(255, 255, 255, 0.98);
-                backdrop-filter: blur(8px);
-                border-radius: 24px;
-                margin-top: 10px;
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .nav-container {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
         }
 
         .popup-message {
@@ -936,29 +849,7 @@
 
 <body>
 
-    <!-- Sticky Navbar with responsive toggle -->
-    <nav class="navbar">
-        <div class="container nav-container">
-            <a href="#" class="">
-                <img src="{% static 'img/inka_logo_transparent.png' %}" alt="INKAGROWTH Digital Marketing Agency Logo"
-                    style="width: 120px; height: 50px">
-            </a>
-            <button class="menu-toggle" id="mobileMenuToggle" aria-label="Menu">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="nav-links" id="navLinks">
-                <a href="#services">Services</a>
-                <a href="#about">About</a>
-                <a href="#about">About</a>
-                <a href="#testimonials">Clients</a>
-                <a href="/contact/">Contact</a>
-                <a href="#stats">Results</a>
-                <a href="https://blog.inkagrowth.com">Blogs</a>
-                <a href="tel:+919389826074" class="btn-primary" style="padding: 10px 24px; font-size: 0.9rem;">Get Free
-                    Quote</a>
-            </div>
-        </div>
-    </nav>
+    {% include "front/partials/header.html" %}
 
     <!-- Hero Section -->
     <section class="hero" id="hero">
@@ -966,7 +857,7 @@
         <div class="container hero-grid">
             <div class="hero-content fade-up">
                 <h1>INKAGROWTH Digital Marketing Agency</h1>
-                <p style="font-size: 1.2rem; color: #3a3a3a; margin-bottom: 32px;">INKAGROWTH helps businesses in Chandausi grow with SEO, Social Media Marketing, Meta Ads, Website Development, Lead Generation, and Branding.</p>
+                <p style="font-size: 1.2rem; color: #3a3a3a; margin-bottom: 32px;">INKAGROWTH, also searched as Inka Growth, is the official Chandausi digital marketing agency helping businesses grow with SEO, Social Media Marketing, Meta Ads, Website Development, Lead Generation, and Branding.</p>
                 <a href="#contact-form" class="btn-primary">Get Free Consultation <i class="fas fa-arrow-right"
                         style="margin-left: 8px;"></i></a>
             </div>
@@ -1027,16 +918,15 @@
         <div class="container about-grid">
             <div class="about-img slide-left">
                 <img src="https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=700&h=500&fit=crop&auto=format"
-                    alt="Agency team" loading="lazy">
+                    alt="INKAGROWTH digital marketing agency team in Chandausi" loading="lazy" width="700" height="500">
             </div>
             <div class="about-text slide-right">
-                <h2>Digital Marketing Agency in Chandausi</h2>
+                <h2>INKAGROWTH Digital Marketing Agency in Chandausi</h2>
                 <p style="font-size: 1.1rem; margin-bottom: 24px; color: #2c2c2e;">INKAGROWTH was built to bridge the
                     gap between analytics and bold branding. We combine SEO, Social Media Marketing, Meta Ads, Website
                     Development, Lead Generation, and Branding to help modern businesses scale without noise.</p>
-                <p style="color: #4a4a4a;">Our Chandausi team has delivered +300% ROI for SaaS, e-commerce, and B2B
-                    clients worldwide. Let's write your growth story.</p>
-                <a href="#"
+                <p style="color: #4a4a4a;">The INKAGROWTH Chandausi team, led by founder Arpit Kumar, works on SEO, websites, social media, ads, and branded search visibility for growing businesses.</p>
+                <a href="/about-inkagrowth/"
                     style="display: inline-block; margin-top: 32px; color: var(--red); font-weight: 600; text-decoration: none;">Learn
                     more →</a>
             </div>
@@ -1078,7 +968,7 @@
                         digital presence. SEO + content strategy doubled organic traffic in 4 months.”</p>
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <img src="https://randomuser.me/api/portraits/women/44.jpg"
-                            style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;" alt="avatar">
+                            style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;" alt="INKAGROWTH client testimonial avatar" width="48" height="48">
                         <div><strong>Nina Chen</strong><br><span style="font-size: 0.8rem;">CMO, Vektra Labs</span>
                         </div>
                     </div>
@@ -1089,7 +979,7 @@
                         5x ROAS within 8 weeks. Their creative strategy stands out.”</p>
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <img src="https://randomuser.me/api/portraits/men/32.jpg"
-                            style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;" alt="avatar">
+                            style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;" alt="INKAGROWTH paid ads client testimonial avatar" width="48" height="48">
                         <div><strong>Marcus Thorne</strong><br><span style="font-size: 0.8rem;">Founder, Studio
                                 Omni</span></div>
                     </div>
@@ -1100,7 +990,7 @@
                         blazing fast and conversion-focused. Increased leads by 210% in 3 months.”</p>
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <img src="https://randomuser.me/api/portraits/women/68.jpg"
-                            style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;" alt="avatar">
+                            style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;" alt="INKAGROWTH website development client testimonial avatar" width="48" height="48">
                         <div><strong>Sophia Ramirez</strong><br><span style="font-size: 0.8rem;">Head of Growth,
                                 Lune</span></div>
                     </div>
@@ -1118,7 +1008,7 @@
                 <img src="https://cdn.simpleicons.org/googleanalytics" alt="Google Analytics" style="height: 40px;">
                 <img src="https://cdn.simpleicons.org/googleads" alt="Google Ads" style="height: 40px;">
                 <img src="https://cdn.simpleicons.org/figma" alt="Figma" style="height: 40px;">
-                <img src="{% static 'img/canva-icon.png' %}" alt="Canva" style="height: 40px;">
+                <img src="{% static 'img/canva-icon.png' %}" alt="Canva tool used by INKAGROWTH" style="height: 40px;" width="40" height="40">
             </div>
         </div>
     </center>
@@ -1153,8 +1043,8 @@
         <div class="container form-section fade-up">
             <div class="form-grid">
                 <div class="form-content">
-                    <h2 style="margin-bottom: 12px;">Let’s talk about your growth</h2>
-                    <p style="margin-bottom: 32px; color: #555;">Fill out the form and our team will reach out within 24
+                    <h2 style="margin-bottom: 12px;">Let’s talk about your growth with INKAGROWTH</h2>
+                    <p style="margin-bottom: 32px; color: #555;">Fill out the INKAGROWTH contact form and our team will reach out within 24
                         hours.</p>
                     <form id="contactForm" method="post"
                         style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">
@@ -1181,7 +1071,7 @@
                     </form>
                 </div>
                 <div class="form-image">
-                    <img src="{% static 'img/contact2.png' %}" alt="Contact team" loading="lazy">
+                    <img src="{% static 'img/contact2.png' %}" alt="INKAGROWTH contact team" loading="lazy" width="540" height="540">
                 </div>
             </div>
         </div>
@@ -1196,37 +1086,6 @@
     </div>
 
     <script>
-        // Mobile menu toggle functionality
-        const menuToggle = document.getElementById('mobileMenuToggle');
-        const navLinks = document.getElementById('navLinks');
-        if (menuToggle && navLinks) {
-            menuToggle.addEventListener('click', () => {
-                navLinks.classList.toggle('active');
-                // Optional: change icon between hamburger and close
-                const icon = menuToggle.querySelector('i');
-                if (navLinks.classList.contains('active')) {
-                    icon.classList.remove('fa-bars');
-                    icon.classList.add('fa-times');
-                } else {
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
-            });
-        }
-
-        // Close mobile menu when a link is clicked (for better UX)
-        const mobileLinks = document.querySelectorAll('.nav-links a');
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (navLinks.classList.contains('active')) {
-                    navLinks.classList.remove('active');
-                    const icon = menuToggle.querySelector('i');
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
-            });
-        });
-
         // Intersection Observer for scroll animations
         const animatedElements = document.querySelectorAll('.fade-up, .slide-left, .slide-right');
         const observer = new IntersectionObserver((entries) => {

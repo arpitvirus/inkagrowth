@@ -10,12 +10,16 @@ class FrontPageTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "INKAGROWTH Digital Marketing Agency")
+        self.assertContains(response, "Official Digital Marketing Agency in Chandausi")
+        self.assertContains(response, "BreadcrumbList")
+        self.assertContains(response, "LocalBusiness")
+        self.assertContains(response, "Organization")
 
     def test_contact_page_renders(self):
         response = self.client.get("/contact/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Contact InkaGROWTH")
+        self.assertContains(response, "Contact INKAGROWTH")
 
     def test_homepage_contact_form_saves_contact(self):
         response = self.client.post(
@@ -37,4 +41,31 @@ class FrontPageTests(TestCase):
 
         self.assertEqual(sitemap.status_code, 200)
         self.assertIn("/contact/", sitemap.content.decode())
+        self.assertIn("/about-inkagrowth/", sitemap.content.decode())
+        self.assertIn("/blog/who-is-inkagrowth/", sitemap.content.decode())
         self.assertEqual(robots.status_code, 200)
+
+    def test_authority_pages_render(self):
+        for path in [
+            "/about-inkagrowth/",
+            "/team/",
+            "/privacy-policy/",
+            "/terms-and-conditions/",
+        ]:
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, "INKAGROWTH")
+            self.assertContains(response, "BreadcrumbList")
+
+    def test_branded_blog_posts_render(self):
+        for path in [
+            "/blog/who-is-inkagrowth/",
+            "/blog/why-businesses-choose-inkagrowth/",
+            "/blog/inkagrowth-digital-marketing-services/",
+            "/blog/inkagrowth-success-stories/",
+            "/blog/inkagrowth-social-media-marketing-process/",
+        ]:
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, "INKAGROWTH")
+            self.assertContains(response, "INKAGROWTH homepage")

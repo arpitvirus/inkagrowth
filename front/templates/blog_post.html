@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>{{ post.title }}</title>
+    <meta name="description" content="{{ post.description }}">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="INKAGROWTH">
+    <link rel="canonical" href="{{ canonical }}">
+    <link rel="icon" href="{% static 'img/logo.png' %}" sizes="48x48" type="image/png">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{ post.title }}">
+    <meta property="og:description" content="{{ post.description }}">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:image" content="https://www.inkagrowth.com/static/img/logo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ post.title }}">
+    <meta name="twitter:description" content="{{ post.description }}">
+    <meta name="twitter:image" content="https://www.inkagrowth.com/static/img/logo.png">
+    <script type="application/ld+json">{{ schema_json|safe }}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; color: #111111; background: #ffffff; line-height: 1.7; }
+        :root { --red:#d43c32; --gray-border:#e9e9ef; --gray-light:#f7f7f9; }
+        .container { max-width: 920px; margin: 0 auto; padding: 0 32px; }
+        .navbar { position: sticky; top: 0; background: rgba(255,255,255,.94); backdrop-filter: blur(12px); z-index: 1000; border-bottom: 1px solid var(--gray-border); padding: 18px 0; }
+        .nav-container { max-width: 1120px; margin: 0 auto; padding: 0 32px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .nav-links { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+        .nav-links a, .content a { text-decoration: none; color: var(--red); font-weight: 600; }
+        .hero { padding: 72px 0 38px; border-bottom: 1px solid var(--gray-border); }
+        h1 { font-size: 3rem; line-height: 1.12; letter-spacing: 0; margin-bottom: 16px; }
+        h2 { font-size: 1.7rem; line-height: 1.25; letter-spacing: 0; margin: 34px 0 10px; }
+        p { color: #444; }
+        .content { padding: 52px 0 82px; }
+        .brand-cta { background: var(--gray-light); border: 1px solid var(--gray-border); border-radius: 8px; padding: 24px; margin-top: 34px; }
+        @media(max-width: 760px) { h1 { font-size: 2.2rem; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/"><img src="{% static 'img/inka_logo_transparent.png' %}" alt="INKAGROWTH Digital Marketing Agency Logo" width="120" height="50"></a>
+            <div class="nav-links">
+                <a href="/">INKAGROWTH Home</a>
+                <a href="/blog/">Blog</a>
+                <a href="/about-inkagrowth/">About</a>
+                <a href="/contact/">Contact</a>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>{{ post.heading }}</h1>
+                <p>{{ post.summary }}</p>
+            </div>
+        </section>
+        <article class="container content">
+            {% for title, body in post.sections %}
+                <h2>{{ title }}</h2>
+                <p>{{ body }}</p>
+            {% endfor %}
+            <div class="brand-cta">
+                <h2>Official INKAGROWTH source</h2>
+                <p>This article is part of the official INKAGROWTH website. For accurate information about INKAGROWTH, visit the <a href="/">INKAGROWTH homepage</a>, read the <a href="/about-inkagrowth/">About INKAGROWTH</a> page, or <a href="/contact/">contact INKAGROWTH</a>.</p>
+            </div>
+        </article>
+    </main>
+    {% include 'partials/footer.html' %}
+</body>
+</html>

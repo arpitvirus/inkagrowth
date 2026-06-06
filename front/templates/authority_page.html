@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>{{ page.title }}</title>
+    <meta name="description" content="{{ page.description }}">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="INKAGROWTH">
+    <link rel="canonical" href="{{ canonical }}">
+    <link rel="icon" href="{% static 'img/logo.png' %}" sizes="48x48" type="image/png">
+    <link rel="shortcut icon" href="{% static 'img/logo.png' %}" type="image/png">
+    <link rel="apple-touch-icon" href="{% static 'img/logo.png' %}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ page.title }}">
+    <meta property="og:description" content="{{ page.description }}">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:image" content="https://www.inkagrowth.com/static/img/logo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ page.title }}">
+    <meta name="twitter:description" content="{{ page.description }}">
+    <meta name="twitter:image" content="https://www.inkagrowth.com/static/img/logo.png">
+    <script type="application/ld+json">{{ schema_json|safe }}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; color: #111111; background: #ffffff; line-height: 1.65; }
+        :root { --red:#d43c32; --red-dark:#b22f26; --gray-border:#e9e9ef; --gray-light:#f7f7f9; }
+        .container { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+        .navbar { position: sticky; top: 0; background: rgba(255,255,255,.94); backdrop-filter: blur(12px); z-index: 1000; border-bottom: 1px solid var(--gray-border); padding: 18px 0; }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .nav-links { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+        .nav-links a { text-decoration: none; color: #111111; font-weight: 500; }
+        .nav-links a:hover { color: var(--red); }
+        .btn-primary { display: inline-block; background: var(--red); color: #ffffff !important; font-weight: 600; padding: 12px 26px; border-radius: 40px; text-decoration: none; }
+        .btn-primary:hover { background: var(--red-dark); }
+        .hero { padding: 84px 0 54px; background: linear-gradient(135deg, #ffffff 0%, #fffcfc 100%); border-bottom: 1px solid var(--gray-border); }
+        .eyebrow { color: var(--red); font-weight: 700; text-transform: uppercase; font-size: .82rem; letter-spacing: .08em; margin-bottom: 12px; }
+        h1 { font-size: 3.1rem; line-height: 1.12; letter-spacing: 0; margin-bottom: 18px; max-width: 850px; }
+        h2 { font-size: 1.75rem; line-height: 1.25; letter-spacing: 0; margin: 34px 0 12px; }
+        p { color: #444; max-width: 850px; }
+        .content { padding: 64px 0 82px; }
+        .brand-panel { background: var(--gray-light); border: 1px solid var(--gray-border); border-radius: 8px; padding: 28px; margin-top: 34px; }
+        .link-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 26px; }
+        .link-row a { color: var(--red); font-weight: 600; text-decoration: none; }
+        @media(max-width: 760px) { h1 { font-size: 2.2rem; } .hero { padding-top: 56px; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/"><img src="{% static 'img/inka_logo_transparent.png' %}" alt="INKAGROWTH Digital Marketing Agency Logo" width="120" height="50"></a>
+            <div class="nav-links">
+                <a href="/">INKAGROWTH Home</a>
+                <a href="/about-inkagrowth/">About</a>
+                <a href="/team/">Team</a>
+                <a href="/blog/">Blog</a>
+                <a href="/contact/">Contact</a>
+                <a href="tel:+919389826074" class="btn-primary">Get Free Quote</a>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="eyebrow">Official INKAGROWTH page</div>
+                <h1>{{ page.heading }}</h1>
+                <p>{{ page.intro }}</p>
+            </div>
+        </section>
+        <section class="content">
+            <div class="container">
+                {% for title, body in page.sections %}
+                    <h2>{{ title }}</h2>
+                    <p>{{ body }}</p>
+                {% endfor %}
+                <div class="brand-panel">
+                    <h2>Connect with INKAGROWTH</h2>
+                    <p>INKAGROWTH is available through the official website, contact page, business email, phone number, social profiles, and branded blog.</p>
+                    <div class="link-row">
+                        <a href="/">INKAGROWTH homepage</a>
+                        <a href="/contact/">Contact INKAGROWTH</a>
+                        <a href="/blog/">INKAGROWTH Blog</a>
+                        {% for label, url in social_links.items %}
+                            <a href="{{ url }}" target="_blank" rel="noopener noreferrer">INKAGROWTH {{ label }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    {% include 'partials/footer.html' %}
+</body>
+</html>

@@ -6,7 +6,24 @@ class StaticSitemap(Sitemap):
     changefreq = "monthly"
 
     def items(self):
-        return ["home", "contact"]
+        return [
+            "home",
+            "about",
+            "contact",
+            "team",
+            "privacy",
+            "terms",
+            "blog",
+        ]
 
     def location(self, item):
-        return "/" if item == "home" else "/contact/"
+        locations = {
+            "home": "/",
+            "about": "/about-inkagrowth/",
+            "contact": "/contact/",
+            "team": "/team/",
+            "privacy": "/privacy-policy/",
+            "terms": "/terms-and-conditions/",
+            "blog": "/blog/",
+        }
+        return locations[item]

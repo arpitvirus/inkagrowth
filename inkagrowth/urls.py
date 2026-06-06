@@ -53,6 +53,46 @@ path(
         name='contact'
     ),
 
+    path(
+        'about-inkagrowth/',
+        front_views.authority_page,
+        {'slug': 'about-inkagrowth'},
+        name='about_inkagrowth'
+    ),
+
+    path(
+        'team/',
+        front_views.authority_page,
+        {'slug': 'team'},
+        name='team'
+    ),
+
+    path(
+        'privacy-policy/',
+        front_views.authority_page,
+        {'slug': 'privacy-policy'},
+        name='privacy_policy'
+    ),
+
+    path(
+        'terms-and-conditions/',
+        front_views.authority_page,
+        {'slug': 'terms-and-conditions'},
+        name='terms_and_conditions'
+    ),
+
+    path(
+        'blog/',
+        front_views.blog_index,
+        name='blog_index'
+    ),
+
+    path(
+        'blog/<slug:slug>/',
+        front_views.blog_post,
+        name='blog_post'
+    ),
+
 
     # =====================================================
     # CRM AUTHENTICATION
