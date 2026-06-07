@@ -181,3 +181,9 @@ DATABASES = {
         default=os.environ.get('DATABASE_URL')
     )
 }
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://inkagrowth.com",
+    "https://www.inkagrowth.com",
+]
