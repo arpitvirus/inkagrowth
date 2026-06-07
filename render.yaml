@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: inkagrowth
+    env: python
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: gunicorn inkagrowth.wsgi:application
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: PYTHON_VERSION
+        value: 3.13.5
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
