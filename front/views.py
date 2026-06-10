@@ -9,7 +9,7 @@ from django.shortcuts import redirect, render
 from .forms import ContactForm
 
 
-SITE_URL = "https://www.inkagrowth.com"
+SITE_URL = "https://inkagrowth.com"
 BRAND_NAME = "INKAGROWTH"
 BRAND_ALTERNATE_NAME = "Inka Growth"
 CONTACT_EMAIL = "info@inkagrowth.com"
@@ -48,23 +48,99 @@ GLOBAL_FAQS = [
 TEAM_MEMBERS = [
     {
         "name": "Arpit Kumar",
-        "role": "Founder, INKAGROWTH",
+        "role": "Founder & CEO",
         "summary": "Arpit Kumar leads INKAGROWTH strategy across SEO, digital marketing, website development, brand positioning, and growth systems.",
         "email": CONTACT_EMAIL,
     },
     {
-        "name": "Arvind Kumar",
-        "role": "Digital Growth Specialist",
-        "summary": "Arvind supports INKAGROWTH clients with campaign execution, reporting, and practical digital marketing workflows.",
+        "name": "Arvind Pal",
+        "role": "Sales Manager",
+        "summary": "Arvind helps businesses understand the right growth plan and keeps client communication clear from enquiry to onboarding.",
         "email": CONTACT_EMAIL,
     },
     {
         "name": "Prabhat Kumar",
-        "role": "Creative and Web Support",
-        "summary": "Prabhat helps INKAGROWTH deliver branded web experiences, creative assets, and conversion-focused page improvements.",
+        "role": "Product & Digital Marketing Manager",
+        "summary": "Prabhat manages digital marketing execution, product thinking, creative direction, and conversion-focused website improvements.",
         "email": CONTACT_EMAIL,
     },
 ]
+
+SERVICES = [
+    {
+        "title": "Digital Marketing",
+        "slug": "digital-marketing",
+        "icon": "fa-chart-line",
+        "summary": "Full-funnel strategy that connects visibility, content, campaigns, leads, and reporting into one practical growth system.",
+    },
+    {
+        "title": "SEO Services",
+        "slug": "seo",
+        "icon": "fa-magnifying-glass-chart",
+        "summary": "Technical SEO, on-page optimization, local SEO, content structure, and search visibility improvements for long-term traffic.",
+    },
+    {
+        "title": "Social Media Marketing",
+        "slug": "social-media",
+        "icon": "fa-share-nodes",
+        "summary": "Content planning, creative direction, publishing, campaign ideas, and audience engagement across priority social platforms.",
+    },
+    {
+        "title": "Website Development",
+        "slug": "website-development",
+        "icon": "fa-laptop-code",
+        "summary": "Fast, mobile-friendly websites and landing pages designed for trust, clear messaging, enquiries, and measurable action.",
+    },
+    {
+        "title": "Lead Generation",
+        "slug": "lead-generation",
+        "icon": "fa-filter-circle-dollar",
+        "summary": "Landing pages, forms, ad funnels, audience targeting, and follow-up paths built to turn attention into qualified enquiries.",
+    },
+    {
+        "title": "Branding",
+        "slug": "branding",
+        "icon": "fa-pen-nib",
+        "summary": "Positioning, brand messaging, visual direction, and digital identity systems that help customers remember and trust you.",
+    },
+    {
+        "title": "Performance Marketing",
+        "slug": "performance-marketing",
+        "icon": "fa-bullseye",
+        "summary": "Campaign planning, paid media testing, conversion tracking, and optimization focused on leads, sales, and return on spend.",
+    },
+]
+
+PUBLIC_PAGES = {
+    "services": {
+        "title": "Digital Marketing Services in Chandausi | INKAGROWTH",
+        "description": "Explore INKAGROWTH services including digital marketing, SEO, social media marketing, website development, lead generation, branding, and performance marketing.",
+        "heading": "Digital Marketing Services Built for Measurable Growth",
+        "path": "/services/",
+        "schema_type": "Service",
+    },
+    "results": {
+        "title": "Marketing Results and Growth Case Studies | INKAGROWTH",
+        "description": "See INKAGROWTH growth results, case-study style examples, metrics, and before-after improvements from SEO, websites, branding, and performance marketing.",
+        "heading": "Results That Connect Marketing Work to Business Growth",
+        "path": "/results/",
+        "schema_type": "CollectionPage",
+    },
+    "about": {
+        "title": "About INKAGROWTH | Digital Marketing Agency in Chandausi",
+        "description": "Learn about INKAGROWTH, our mission, vision, process, team, and founder-led digital marketing approach from Chandausi, Uttar Pradesh.",
+        "heading": "About INKAGROWTH",
+        "path": "/about/",
+        "schema_type": "AboutPage",
+    },
+    "clients": {
+        "title": "INKAGROWTH Clients | Industries, Testimonials and Trust",
+        "description": "Discover the industries INKAGROWTH serves, local business focus, client trust signals, and testimonials for digital marketing growth.",
+        "heading": "Clients Grow With Clear Strategy and Consistent Execution",
+        "path": "/clients/",
+        "schema_type": "CollectionPage",
+    },
+}
 
 AUTHORITY_PAGES = {
     "about-inkagrowth": {
@@ -243,6 +319,25 @@ def local_business_schema():
     }
 
 
+def page_schema(page):
+    schema_type = page.get("schema_type", "WebPage")
+    schema = {
+        "@context": "https://schema.org",
+        "@type": schema_type,
+        "name": page["heading"],
+        "url": build_url(page["path"]),
+        "description": page["description"],
+        "isPartOf": {"@id": build_url("/#website")},
+        "publisher": {"@id": build_url("/#organization")},
+        "about": {"@id": build_url("/#organization")},
+    }
+    if schema_type == "Service":
+        schema["provider"] = {"@id": build_url("/#organization")}
+        schema["serviceType"] = [service["title"] for service in SERVICES]
+        schema["areaServed"] = ["Chandausi", "Uttar Pradesh", "India"]
+    return schema
+
+
 def faq_schema():
     return {
         "@context": "https://schema.org",
@@ -340,6 +435,44 @@ def contact_page(request):
             ),
         },
     )
+
+
+def render_public_page(request, page_key, template_name):
+    page = PUBLIC_PAGES[page_key]
+    return render(
+        request,
+        template_name,
+        {
+            "page": page,
+            "canonical": build_url(page["path"]),
+            "services": SERVICES,
+            "team_members": TEAM_MEMBERS,
+            "social_links": SOCIAL_LINKS,
+            "schema_json": jsonld(
+                base_organization_schema(),
+                website_schema(),
+                local_business_schema(),
+                breadcrumb_schema([("INKAGROWTH", "/"), (page["heading"], page["path"])]),
+                page_schema(page),
+            ),
+        },
+    )
+
+
+def services_page(request):
+    return render_public_page(request, "services", "services.html")
+
+
+def results_page(request):
+    return render_public_page(request, "results", "results.html")
+
+
+def about_page(request):
+    return render_public_page(request, "about", "about.html")
+
+
+def clients_page(request):
+    return render_public_page(request, "clients", "clients.html")
 
 
 def authority_page(request, slug):
@@ -441,6 +574,10 @@ def sitemap_xml(request):
     today = date.today().isoformat()
     page_paths = [
         ("/", "1.0"),
+        ("/services/", "0.9"),
+        ("/results/", "0.9"),
+        ("/about/", "0.9"),
+        ("/clients/", "0.9"),
         ("/about-inkagrowth/", "0.9"),
         ("/contact/", "0.9"),
         ("/team/", "0.8"),

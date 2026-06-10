@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>{{ page.title }}</title>
+    <meta name="description" content="{{ page.description }}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ canonical }}">
+    <link rel="icon" href="{% static 'img/logo.png' %}" sizes="48x48" type="image/png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ page.title }}">
+    <meta property="og:description" content="{{ page.description }}">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:image" content="https://inkagrowth.com/static/img/logo.png">
+    <script type="application/ld+json">{{ schema_json|safe }}</script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root { --black:#111; --red:#d43c32; --red-dark:#b22f26; --soft:#f7f7f9; --line:#e8e8ee; }
+        body { font-family: Inter, sans-serif; color: var(--black); line-height: 1.6; }
+        .container { max-width: 1180px; padding-left: 24px; padding-right: 24px; }
+        .btn-primary { background: var(--red); border-color: var(--red); border-radius: 999px; padding: 13px 26px; font-weight: 700; }
+        .btn-primary:hover { background: var(--red-dark); border-color: var(--red-dark); }
+        .page-hero { padding: 88px 0 72px; background: linear-gradient(135deg, #ffffff 0%, #fff5f4 100%); }
+        .eyebrow { color: var(--red); font-weight: 800; text-transform: uppercase; font-size: .8rem; letter-spacing: .08em; }
+        h1 { font-size: clamp(2.35rem, 5vw, 4.25rem); line-height: 1.05; font-weight: 800; letter-spacing: 0; margin: 14px 0 20px; }
+        h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; letter-spacing: 0; }
+        h3 { font-size: 1.15rem; font-weight: 800; letter-spacing: 0; }
+        section { padding: 76px 0; }
+        .lead-copy { color: #505057; font-size: 1.14rem; max-width: 760px; }
+        .metric-card, .case-card, .compare-card { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 28px; height: 100%; box-shadow: 0 22px 55px rgba(17,17,17,.07); }
+        .metric-card strong { display: block; color: var(--red); font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1; font-weight: 800; }
+        .band { background: var(--soft); }
+        .tag { display: inline-block; border: 1px solid rgba(212,60,50,.22); color: var(--red); border-radius: 999px; padding: 6px 12px; font-size: .82rem; font-weight: 700; margin-bottom: 16px; }
+        .compare-card.before { background: #171717; color: #fff; }
+        .compare-card.before p { color: #d4d4d4; }
+        .compare-card.after { border-color: rgba(212,60,50,.35); }
+        .cta-band { background: #111; color: #fff; }
+        .cta-band p { color: #dedede; }
+        @media (max-width: 768px) { .page-hero, section { padding: 56px 0; } }
+    </style>
+</head>
+<body>
+    {% include "front/partials/header.html" %}
+    <main>
+        <section class="page-hero">
+            <div class="container">
+                <span class="eyebrow">Growth Results</span>
+                <h1>{{ page.heading }}</h1>
+                <p class="lead-copy">INKAGROWTH focuses on practical improvements: stronger search visibility, better websites, clearer offers, more qualified leads, and reporting that shows what changed.</p>
+                <a class="btn btn-primary mt-4" href="/contact/">Want Results Like This?</a>
+            </div>
+        </section>
+
+        <section>
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-md-4"><div class="metric-card"><strong>2x</strong><h2 class="h5 mt-3">Lead path clarity</h2><p>Cleaner calls to action, faster contact flows, and stronger trust signals.</p></div></div>
+                    <div class="col-md-4"><div class="metric-card"><strong>70%</strong><h2 class="h5 mt-3">Visibility focus</h2><p>Priority work goes into search, local discovery, and content structure.</p></div></div>
+                    <div class="col-md-4"><div class="metric-card"><strong>30d</strong><h2 class="h5 mt-3">Action cycles</h2><p>Monthly planning, execution, review, and optimization for continuous growth.</p></div></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="band">
+            <div class="container">
+                <div class="mb-5">
+                    <span class="eyebrow">Case Study Style</span>
+                    <h2>Examples of business growth work</h2>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-4"><article class="case-card"><span class="tag">Local Business</span><h3>Search visibility rebuild</h3><p>Improved page structure, local keywords, technical basics, and contact paths so high-intent customers could find and contact the business faster.</p></article></div>
+                    <div class="col-lg-4"><article class="case-card"><span class="tag">Service Brand</span><h3>Website conversion upgrade</h3><p>Clarified offer messaging, added proof points, improved mobile sections, and reduced friction across forms and phone call actions.</p></article></div>
+                    <div class="col-lg-4"><article class="case-card"><span class="tag">Campaign Growth</span><h3>Lead generation funnel</h3><p>Connected landing page copy, audience targeting, social creatives, and follow-up structure for more consistent qualified enquiries.</p></article></div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="container">
+                <div class="row g-4 align-items-stretch">
+                    <div class="col-lg-6"><div class="compare-card before"><span class="eyebrow">Before</span><h2>Scattered marketing activity</h2><p>Unclear service pages, weak calls to action, inconsistent content, limited reporting, and no obvious growth priority.</p></div></div>
+                    <div class="col-lg-6"><div class="compare-card after"><span class="eyebrow">After</span><h2>Focused growth system</h2><p>Search-ready pages, consistent brand messaging, better conversion paths, tracked enquiries, and a monthly action plan.</p></div></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-band">
+            <div class="container text-center">
+                <h2>Want Results Like This?</h2>
+                <p class="lead-copy mx-auto">Start with a free consultation and get a clear view of the fastest growth opportunities for your business.</p>
+                <a class="btn btn-primary mt-3" href="/contact/">Book Free Consultation</a>
+            </div>
+        </section>
+    </main>
+    {% include 'partials/footer.html' %}
+</body>
+</html>

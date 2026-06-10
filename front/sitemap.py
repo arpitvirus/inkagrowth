@@ -8,7 +8,10 @@ class StaticSitemap(Sitemap):
     def items(self):
         return [
             "home",
+            "services",
+            "results",
             "about",
+            "clients",
             "contact",
             "team",
             "privacy",
@@ -19,7 +22,10 @@ class StaticSitemap(Sitemap):
     def location(self, item):
         locations = {
             "home": "/",
-            "about": "/about-inkagrowth/",
+            "services": "/services/",
+            "results": "/results/",
+            "about": "/about/",
+            "clients": "/clients/",
             "contact": "/contact/",
             "team": "/team/",
             "privacy": "/privacy-policy/",

@@ -54,6 +54,30 @@ path(
     ),
 
     path(
+        'services/',
+        front_views.services_page,
+        name='services'
+    ),
+
+    path(
+        'results/',
+        front_views.results_page,
+        name='results'
+    ),
+
+    path(
+        'about/',
+        front_views.about_page,
+        name='about'
+    ),
+
+    path(
+        'clients/',
+        front_views.clients_page,
+        name='clients'
+    ),
+
+    path(
         'about-inkagrowth/',
         front_views.authority_page,
         {'slug': 'about-inkagrowth'},
