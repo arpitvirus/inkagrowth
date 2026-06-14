@@ -78,6 +78,62 @@ path(
     ),
 
     path(
+        'digital-marketing-services/',
+        front_views.service_landing_page,
+        {'slug': 'digital-marketing-services'},
+        name='digital_marketing_services'
+    ),
+
+    path(
+        'seo-services/',
+        front_views.service_landing_page,
+        {'slug': 'seo-services'},
+        name='seo_services'
+    ),
+
+    path(
+        'social-media-marketing/',
+        front_views.service_landing_page,
+        {'slug': 'social-media-marketing'},
+        name='social_media_marketing'
+    ),
+
+    path(
+        'website-development/',
+        front_views.service_landing_page,
+        {'slug': 'website-development'},
+        name='website_development'
+    ),
+
+    path(
+        'google-ads-services/',
+        front_views.service_landing_page,
+        {'slug': 'google-ads-services'},
+        name='google_ads_services'
+    ),
+
+    path(
+        'lead-generation-services/',
+        front_views.service_landing_page,
+        {'slug': 'lead-generation-services'},
+        name='lead_generation_services'
+    ),
+
+    path(
+        'branding-services/',
+        front_views.service_landing_page,
+        {'slug': 'branding-services'},
+        name='branding_services'
+    ),
+
+    path(
+        'performance-marketing-services/',
+        front_views.service_landing_page,
+        {'slug': 'performance-marketing-services'},
+        name='performance_marketing_services'
+    ),
+
+    path(
         'about-inkagrowth/',
         front_views.authority_page,
         {'slug': 'about-inkagrowth'},

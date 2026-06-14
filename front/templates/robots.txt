@@ -1,7 +1,9 @@
 User-agent: *
 Allow: /
+
 Disallow: /admin/
+Disallow: /crm/
+Disallow: /login/
 Disallow: /dashboard/
-Disallow: /accounts/
 
 Sitemap: https://inkagrowth.com/sitemap.xml

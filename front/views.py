@@ -9,7 +9,7 @@ from django.shortcuts import redirect, render
 from .forms import ContactForm
 
 
-SITE_URL = "https://inkagrowth.com"
+SITE_URL = "https://www.inkagrowth.com"
 BRAND_NAME = "INKAGROWTH"
 BRAND_ALTERNATE_NAME = "Inka Growth"
 CONTACT_EMAIL = "info@inkagrowth.com"
@@ -70,46 +70,160 @@ SERVICES = [
     {
         "title": "Digital Marketing",
         "slug": "digital-marketing",
+        "path": "/digital-marketing-services/",
         "icon": "fa-chart-line",
         "summary": "Full-funnel strategy that connects visibility, content, campaigns, leads, and reporting into one practical growth system.",
     },
     {
         "title": "SEO Services",
         "slug": "seo",
+        "path": "/seo-services/",
         "icon": "fa-magnifying-glass-chart",
         "summary": "Technical SEO, on-page optimization, local SEO, content structure, and search visibility improvements for long-term traffic.",
     },
     {
         "title": "Social Media Marketing",
         "slug": "social-media",
+        "path": "/social-media-marketing/",
         "icon": "fa-share-nodes",
         "summary": "Content planning, creative direction, publishing, campaign ideas, and audience engagement across priority social platforms.",
     },
     {
         "title": "Website Development",
         "slug": "website-development",
+        "path": "/website-development/",
         "icon": "fa-laptop-code",
         "summary": "Fast, mobile-friendly websites and landing pages designed for trust, clear messaging, enquiries, and measurable action.",
     },
     {
         "title": "Lead Generation",
         "slug": "lead-generation",
+        "path": "/lead-generation-services/",
         "icon": "fa-filter-circle-dollar",
         "summary": "Landing pages, forms, ad funnels, audience targeting, and follow-up paths built to turn attention into qualified enquiries.",
     },
     {
         "title": "Branding",
         "slug": "branding",
+        "path": "/branding-services/",
         "icon": "fa-pen-nib",
         "summary": "Positioning, brand messaging, visual direction, and digital identity systems that help customers remember and trust you.",
     },
     {
         "title": "Performance Marketing",
         "slug": "performance-marketing",
+        "path": "/performance-marketing-services/",
         "icon": "fa-bullseye",
         "summary": "Campaign planning, paid media testing, conversion tracking, and optimization focused on leads, sales, and return on spend.",
     },
 ]
+
+SERVICE_LANDING_PAGES = {
+    "digital-marketing-services": {
+        "title": "Digital Marketing Services in Chandausi | INKAGROWTH",
+        "description": "Digital marketing services in Chandausi from INKAGROWTH: SEO, websites, social media, Google Ads, branding, lead generation, and reporting.",
+        "heading": "Digital Marketing Services in Chandausi",
+        "eyebrow": "Digital Marketing",
+        "path": "/digital-marketing-services/",
+        "summary": "INKAGROWTH builds practical digital marketing plans for businesses that need search visibility, sharper websites, stronger social content, and better lead flow.",
+        "sections": [
+            ("Search and discovery", "We improve how customers find your business through technical SEO, keyword-focused pages, local search signals, and useful content structure."),
+            ("Website and conversion", "We make sure traffic has a clear path to trust, enquiry, calls, forms, and next-step actions across mobile and desktop experiences."),
+            ("Campaign learning", "We connect organic work, paid campaigns, analytics, and monthly reporting so every channel teaches the next decision."),
+        ],
+    },
+    "seo-services": {
+        "title": "SEO Services in Chandausi | INKAGROWTH",
+        "description": "SEO services in Chandausi for technical SEO, on-page optimization, local SEO, content structure, and search visibility from INKAGROWTH.",
+        "heading": "SEO Services in Chandausi",
+        "eyebrow": "SEO",
+        "path": "/seo-services/",
+        "summary": "INKAGROWTH helps businesses earn more qualified organic visibility with technical fixes, local search improvements, service-page optimization, and content planning.",
+        "sections": [
+            ("Technical SEO foundations", "We review crawlability, page structure, internal links, speed basics, metadata, canonical tags, and indexability signals."),
+            ("Local and service keywords", "We map high-intent local searches to clear pages so customers understand your offer and can contact you quickly."),
+            ("Content that answers demand", "We build content around real customer questions, service proof, location context, and conversion intent."),
+        ],
+    },
+    "social-media-marketing": {
+        "title": "Social Media Marketing in Chandausi | INKAGROWTH",
+        "description": "Social media marketing in Chandausi for content planning, creative direction, publishing, campaigns, and audience engagement by INKAGROWTH.",
+        "heading": "Social Media Marketing in Chandausi",
+        "eyebrow": "Social Media",
+        "path": "/social-media-marketing/",
+        "summary": "INKAGROWTH turns social media into a consistent brand presence with content pillars, campaign ideas, creative direction, and lead-focused messaging.",
+        "sections": [
+            ("Content planning", "We define topics, offers, proof points, and publishing rhythms that match your audience and business goals."),
+            ("Creative execution", "We shape posts, reels, captions, and campaign assets so the brand looks consistent and easy to understand."),
+            ("Audience and lead flow", "We connect engagement to enquiry paths, landing pages, WhatsApp, calls, and follow-up systems."),
+        ],
+    },
+    "website-development": {
+        "title": "Website Development in Chandausi | INKAGROWTH",
+        "description": "Website development in Chandausi for fast, mobile-friendly, SEO-ready, conversion-focused business websites by INKAGROWTH.",
+        "heading": "Website Development in Chandausi",
+        "eyebrow": "Website Development",
+        "path": "/website-development/",
+        "summary": "INKAGROWTH builds and improves websites that explain the offer clearly, load well on mobile, support SEO, and make enquiries easier.",
+        "sections": [
+            ("Clear page structure", "We organize homepage, service, about, proof, and contact sections so visitors can scan and decide faster."),
+            ("SEO-ready build", "We include titles, descriptions, headings, internal links, schema basics, canonical tags, and crawlable public pages."),
+            ("Conversion paths", "We design calls, forms, WhatsApp actions, trust sections, and lead capture points around real customer behavior."),
+        ],
+    },
+    "google-ads-services": {
+        "title": "Google Ads Services in Chandausi | INKAGROWTH",
+        "description": "Google Ads services in Chandausi for search campaigns, landing pages, conversion tracking, and lead generation from INKAGROWTH.",
+        "heading": "Google Ads Services in Chandausi",
+        "eyebrow": "Google Ads",
+        "path": "/google-ads-services/",
+        "summary": "INKAGROWTH plans Google Ads around useful landing pages, clear offers, search intent, conversion tracking, and practical budget learning.",
+        "sections": [
+            ("Search intent campaigns", "We group keywords by customer intent so ad copy and landing pages match what people are actively looking for."),
+            ("Lead-focused landing pages", "We connect campaigns to clear pages with contact actions, trust signals, and service-specific messaging."),
+            ("Measurement and optimization", "We review enquiries, cost, terms, landing-page behavior, and campaign quality before scaling spend."),
+        ],
+    },
+    "lead-generation-services": {
+        "title": "Lead Generation Services in Chandausi | INKAGROWTH",
+        "description": "Lead generation services in Chandausi for landing pages, forms, campaigns, tracking, and follow-up systems by INKAGROWTH.",
+        "heading": "Lead Generation Services in Chandausi",
+        "eyebrow": "Lead Generation",
+        "path": "/lead-generation-services/",
+        "summary": "INKAGROWTH helps businesses turn traffic and campaign attention into qualified enquiries with clearer offers, landing pages, forms, and follow-up paths.",
+        "sections": [
+            ("Offer clarity", "We define what customers get, why it matters, and what action they should take next."),
+            ("Landing page flow", "We build pages with proof, FAQs, calls to action, contact forms, and mobile-friendly sections."),
+            ("Follow-up readiness", "We connect enquiries to CRM thinking, WhatsApp, email, and team workflows so leads do not disappear after submission."),
+        ],
+    },
+    "branding-services": {
+        "title": "Branding Services in Chandausi | INKAGROWTH",
+        "description": "Branding services in Chandausi for positioning, messaging, visual direction, and digital identity systems from INKAGROWTH.",
+        "heading": "Branding Services in Chandausi",
+        "eyebrow": "Branding",
+        "path": "/branding-services/",
+        "summary": "INKAGROWTH helps businesses look clearer and more trustworthy with practical positioning, messaging, visual direction, and digital brand consistency.",
+        "sections": [
+            ("Positioning", "We clarify who the business serves, what makes it useful, and why customers should trust it."),
+            ("Messaging", "We shape headlines, service explanations, proof points, and calls to action for websites and campaigns."),
+            ("Digital consistency", "We align website, social, search snippets, business profiles, and campaign creative around one recognizable identity."),
+        ],
+    },
+    "performance-marketing-services": {
+        "title": "Performance Marketing Services in Chandausi | INKAGROWTH",
+        "description": "Performance marketing services in Chandausi for paid campaigns, conversion tracking, landing pages, and optimization by INKAGROWTH.",
+        "heading": "Performance Marketing Services in Chandausi",
+        "eyebrow": "Performance Marketing",
+        "path": "/performance-marketing-services/",
+        "summary": "INKAGROWTH uses campaign testing, landing-page improvements, conversion tracking, and reporting to help businesses learn what creates measurable enquiries.",
+        "sections": [
+            ("Channel planning", "We choose search, social, retargeting, or landing-page improvements based on the offer and customer intent."),
+            ("Tracking and reporting", "We set up practical measurement around leads, calls, forms, campaign performance, and page behavior."),
+            ("Optimization cycles", "We improve audiences, copy, creative, budgets, and landing pages based on what the data shows."),
+        ],
+    },
+}
 
 PUBLIC_PAGES = {
     "services": {
@@ -338,6 +452,19 @@ def page_schema(page):
     return schema
 
 
+def service_landing_schema(page):
+    return {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": page["heading"],
+        "url": build_url(page["path"]),
+        "description": page["description"],
+        "provider": {"@id": build_url("/#organization")},
+        "areaServed": ["Chandausi", "Uttar Pradesh", "India"],
+        "isPartOf": {"@id": build_url("/#website")},
+    }
+
+
 def faq_schema():
     return {
         "@context": "https://schema.org",
@@ -475,6 +602,34 @@ def clients_page(request):
     return render_public_page(request, "clients", "clients.html")
 
 
+def service_landing_page(request, slug):
+    page = SERVICE_LANDING_PAGES.get(slug)
+    if page is None:
+        raise Http404("Page not found")
+
+    related_pages = [
+        related_page
+        for related_slug, related_page in SERVICE_LANDING_PAGES.items()
+        if related_slug != slug
+    ][:4]
+    return render(
+        request,
+        "service_landing.html",
+        {
+            "page": page,
+            "canonical": build_url(page["path"]),
+            "related_pages": related_pages,
+            "schema_json": jsonld(
+                base_organization_schema(),
+                website_schema(),
+                local_business_schema(),
+                breadcrumb_schema([("INKAGROWTH", "/"), ("Services", "/services/"), (page["heading"], page["path"])]),
+                service_landing_schema(page),
+            ),
+        },
+    )
+
+
 def authority_page(request, slug):
     page = AUTHORITY_PAGES.get(slug)
     if page is None:
@@ -585,9 +740,10 @@ def sitemap_xml(request):
         ("/terms-and-conditions/", "0.6"),
         ("/blog/", "0.8"),
     ]
+    landing_paths = [(page["path"], "0.85") for page in SERVICE_LANDING_PAGES.values()]
     post_paths = [(f"/blog/{slug}/", "0.7") for slug in BLOG_POSTS]
     urlset = Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
-    for path, priority in page_paths + post_paths:
+    for path, priority in page_paths + landing_paths + post_paths:
         url = SubElement(urlset, "url")
         SubElement(url, "loc").text = build_url(path)
         SubElement(url, "lastmod").text = today
