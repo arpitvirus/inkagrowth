@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 from urllib.robotparser import RobotFileParser
 from xml.etree import ElementTree
 
-from .models import contact
+from .models import PortfolioProject, contact
 from .views import BLOG_POSTS, SERVICE_LANDING_PAGES
 
 
@@ -45,6 +45,7 @@ class FrontPageTests(TestCase):
 
         self.assertEqual(sitemap.status_code, 200)
         self.assertIn("/contact/", sitemap.content.decode())
+        self.assertIn("/portfolio/", sitemap.content.decode())
         self.assertIn("/about-inkagrowth/", sitemap.content.decode())
         self.assertIn("/blog/who-is-inkagrowth/", sitemap.content.decode())
         self.assertEqual(robots.status_code, 200)
@@ -60,7 +61,7 @@ class FrontPageTests(TestCase):
                     "Disallow: /login/",
                     "Disallow: /dashboard/",
                     "",
-                    "Sitemap: https://inkagrowth.com/sitemap.xml",
+                    "Sitemap: https://www.inkagrowth.com/sitemap.xml",
                 ]
             ),
         )
@@ -83,6 +84,7 @@ class FrontPageTests(TestCase):
         self.assertIn("https://www.inkagrowth.com/", locs)
         self.assertIn("https://www.inkagrowth.com/contact/", locs)
         self.assertIn("https://www.inkagrowth.com/services/", locs)
+        self.assertIn("https://www.inkagrowth.com/portfolio/", locs)
         self.assertIn("https://www.inkagrowth.com/blog/", locs)
 
         for page in SERVICE_LANDING_PAGES.values():
@@ -152,3 +154,108 @@ class FrontPageTests(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, "INKAGROWTH")
             self.assertContains(response, "INKAGROWTH homepage")
+
+    def test_portfolio_listing_renders_without_projects(self):
+        response = self.client.get("/portfolio/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Our Portfolio")
+        self.assertContains(response, '<link rel="canonical" href="https://www.inkagrowth.com/portfolio/">', html=True)
+        self.assertContains(response, '<meta name="robots" content="index, follow">', html=True)
+
+    def test_portfolio_project_slug_is_generated_and_unique(self):
+        first = PortfolioProject.objects.create(
+            business_name="Satrang Makeover",
+            business_category="Women Salon",
+            location="Chandausi",
+            short_description="Local SEO project.",
+            service_type=PortfolioProject.SERVICE_GOOGLE_MAPS_SEO,
+        )
+        second = PortfolioProject.objects.create(
+            business_name="Satrang Makeover",
+            business_category="Women Salon",
+            location="Chandausi",
+            short_description="Second local SEO project.",
+            service_type=PortfolioProject.SERVICE_GOOGLE_MAPS_SEO,
+        )
+
+        self.assertEqual(first.slug, "satrang-makeover")
+        self.assertEqual(second.slug, "satrang-makeover-2")
+
+    def test_portfolio_detail_renders_dynamic_seo_and_canonical(self):
+        project = PortfolioProject.objects.create(
+            business_name="Satrang Makeover",
+            business_category="Women Salon & Bridal Makeup Studio",
+            location="Shakti Nagar, Chandausi",
+            short_description="A local visibility project.",
+            service_type=PortfolioProject.SERVICE_GOOGLE_MAPS_SEO,
+            services_provided="Google Maps SEO, Social Media Management",
+            result_summary="Improve local search visibility and inquiries.",
+            meta_title="Satrang Makeover SEO Case Study",
+            meta_description="A dynamic portfolio detail meta description.",
+        )
+
+        response = self.client.get(project.get_absolute_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Satrang Makeover SEO Case Study")
+        self.assertContains(response, "A dynamic portfolio detail meta description.")
+        self.assertContains(response, f'<link rel="canonical" href="https://www.inkagrowth.com{project.get_absolute_url()}">', html=True)
+        self.assertContains(response, "CreativeWork")
+
+    def test_sitemap_includes_only_live_portfolio_projects_with_updated_at_lastmod(self):
+        active = PortfolioProject.objects.create(
+            business_name="Active Project",
+            business_category="Local Business",
+            location="Chandausi",
+            short_description="Active project description.",
+            status=PortfolioProject.STATUS_COMPLETED,
+            service_type=PortfolioProject.SERVICE_LOCAL_SEO,
+        )
+        inactive = PortfolioProject.objects.create(
+            business_name="Draft Project",
+            business_category="Local Business",
+            location="Chandausi",
+            short_description="Draft project description.",
+            status="draft",
+            service_type=PortfolioProject.SERVICE_LOCAL_SEO,
+        )
+
+        sitemap = self.client.get("/sitemap.xml")
+        self.assertEqual(sitemap.status_code, 200)
+
+        root = ElementTree.fromstring(sitemap.content)
+        namespace = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+        urls = root.findall(".//sm:url", namespace)
+        by_loc = {
+            url.find("sm:loc", namespace).text: url
+            for url in urls
+        }
+
+        active_loc = f"https://www.inkagrowth.com{active.get_absolute_url()}"
+        inactive_loc = f"https://www.inkagrowth.com{inactive.get_absolute_url()}"
+
+        self.assertIn(active_loc, by_loc)
+        self.assertNotIn(inactive_loc, by_loc)
+        self.assertEqual(
+            by_loc[active_loc].find("sm:lastmod", namespace).text,
+            active.updated_at.date().isoformat(),
+        )
+        self.assertEqual(by_loc[active_loc].find("sm:changefreq", namespace).text, "monthly")
+        self.assertEqual(by_loc[active_loc].find("sm:priority", namespace).text, "0.7")
+
+    def test_portfolio_sitemap_reflects_slug_changes(self):
+        project = PortfolioProject.objects.create(
+            business_name="Slug Change Project",
+            business_category="Local Business",
+            location="Chandausi",
+            short_description="Slug change project description.",
+            service_type=PortfolioProject.SERVICE_WEBSITE,
+        )
+        project.slug = "updated-portfolio-slug"
+        project.save()
+
+        sitemap = self.client.get("/sitemap.xml").content.decode()
+
+        self.assertIn("https://www.inkagrowth.com/portfolio/updated-portfolio-slug/", sitemap)
+        self.assertNotIn("https://www.inkagrowth.com/portfolio/slug-change-project/", sitemap)

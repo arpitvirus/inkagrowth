@@ -1,0 +1,199 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>{{ page.title }}</title>
+    <meta name="description" content="{{ page.description }}">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="INKAGROWTH">
+    <link rel="canonical" href="{{ canonical }}">
+    <link rel="icon" href="{% static 'img/logo.png' %}" sizes="48x48" type="image/png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ page.title }}">
+    <meta property="og:description" content="{{ page.description }}">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:image" content="https://www.inkagrowth.com/static/img/logo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ page.title }}">
+    <meta name="twitter:description" content="{{ page.description }}">
+    <meta name="twitter:image" content="https://www.inkagrowth.com/static/img/logo.png">
+    <script type="application/ld+json">{{ schema_json|safe }}</script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root { --black:#111111; --red:#d43c32; --red-dark:#b22f26; --red-light:rgba(212,60,50,.08); --soft:#f7f7f9; --line:#e8e8ee; --muted:#55555f; }
+        * { box-sizing: border-box; }
+        body { font-family: Inter, sans-serif; color: var(--black); background: #ffffff; line-height: 1.6; overflow-x: hidden; }
+        .container { max-width: 1180px; padding-left: 24px; padding-right: 24px; }
+        .btn-primary { background: var(--red); border-color: var(--red); border-radius: 999px; padding: 13px 26px; font-weight: 800; }
+        .btn-primary:hover { background: var(--red-dark); border-color: var(--red-dark); }
+        .btn-outline-dark { border-radius: 999px; padding: 13px 26px; font-weight: 800; }
+        .portfolio-hero { padding: 88px 0 72px; background: linear-gradient(135deg, #ffffff 0%, #fff5f4 100%); }
+        .eyebrow { color: var(--red); font-weight: 800; text-transform: uppercase; font-size: .8rem; letter-spacing: .08em; }
+        h1 { font-size: clamp(2.4rem, 5vw, 4.5rem); line-height: 1.05; font-weight: 800; margin: 14px 0 18px; letter-spacing: 0; }
+        h2 { font-size: clamp(1.75rem, 3vw, 2.55rem); line-height: 1.15; font-weight: 800; letter-spacing: 0; }
+        h3 { font-size: 1.16rem; font-weight: 800; letter-spacing: 0; }
+        section { padding: 76px 0; }
+        .lead-copy { color: var(--muted); font-size: 1.14rem; max-width: 760px; }
+        .lead-copy a { color: var(--red); font-weight: 800; text-decoration: none; }
+        .lead-copy a:hover { color: var(--red-dark); }
+        .stat-grid, .portfolio-grid, .compare-grid, .testimonial-grid { display: grid; gap: 20px; }
+        .stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .portfolio-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .compare-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .testimonial-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .stat-card, .portfolio-card, .compare-card, .testimonial-card, .featured-panel, .empty-state { border: 1px solid var(--line); border-radius: 8px; background: #fff; box-shadow: 0 22px 55px rgba(17,17,17,.07); }
+        .stat-card { padding: 24px; }
+        .stat-card strong { display: block; font-size: 2rem; color: var(--red); line-height: 1; margin-bottom: 8px; }
+        .filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+        .filter-row a { border: 1px solid var(--line); border-radius: 999px; color: var(--black); padding: 10px 16px; text-decoration: none; font-weight: 700; background: #fff; }
+        .filter-row a.active, .filter-row a:hover { color: #fff; background: var(--red); border-color: var(--red); }
+        .portfolio-card { overflow: hidden; height: 100%; display: flex; flex-direction: column; }
+        .portfolio-card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; background: #fff8f7; }
+        .placeholder-cover { width: 100%; aspect-ratio: 16 / 10; object-fit: contain; background: #fff8f7; padding: 42px; }
+        .portfolio-card-body { padding: 24px; display: flex; flex-direction: column; flex: 1; }
+        .tag { display: inline-flex; align-items: center; width: fit-content; border-radius: 999px; padding: 7px 12px; background: var(--red-light); color: var(--red); font-size: .82rem; font-weight: 800; margin-bottom: 12px; }
+        .portfolio-card p, .compare-card li, .testimonial-card p { color: var(--muted); }
+        .portfolio-meta { color: var(--muted); font-weight: 700; font-size: .9rem; margin-bottom: 12px; }
+        .portfolio-card a.case-link { margin-top: auto; color: var(--red); font-weight: 800; text-decoration: none; }
+        .portfolio-card a.case-link:hover { color: var(--red-dark); }
+        .band { background: var(--soft); }
+        .featured-panel { padding: 30px; background: #111111; color: #fff; }
+        .featured-panel p { color: #dddddd; }
+        .compare-card, .testimonial-card, .empty-state { padding: 26px; }
+        .compare-card ul { margin: 18px 0 0; padding-left: 20px; }
+        .cta-section { background: #111111; color: #fff; }
+        .cta-section p { color: #dedede; }
+        @media (max-width: 992px) { .stat-grid, .portfolio-grid, .testimonial-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 700px) { .portfolio-hero, section { padding: 56px 0; } .stat-grid, .portfolio-grid, .compare-grid, .testimonial-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    {% include "front/partials/header.html" %}
+    <main>
+        <section class="portfolio-hero">
+            <div class="container">
+                <span class="eyebrow">INKAGROWTH Case Studies</span>
+                <h1>{{ page.heading }}</h1>
+                <h2 class="h4 fw-bold mb-3">{{ page.subheading }}</h2>
+                <p class="lead-copy">We help local businesses grow through Google Maps ranking, social media management, Meta Ads, website development, and digital branding.</p>
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <a class="btn btn-primary" href="#case-studies">View Case Studies</a>
+                    <a class="btn btn-outline-dark" href="/contact/">Work With Us</a>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="container">
+                <div class="stat-grid">
+                    <div class="stat-card"><strong>Maps</strong><span>Google Maps Ranking</span></div>
+                    <div class="stat-card"><strong>Leads</strong><span>Leads Generated</span></div>
+                    <div class="stat-card"><strong>Ads</strong><span>Ad Campaigns</span></div>
+                    <div class="stat-card"><strong>Web</strong><span>Websites Delivered</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="case-studies" class="band">
+            <div class="container">
+                <div class="mb-4">
+                    <span class="eyebrow">Portfolio</span>
+                    <h2>Case studies by growth service</h2>
+                    <div class="filter-row" aria-label="Portfolio service filters">
+                        <a class="{% if not active_service %}active{% endif %}" href="/portfolio/">All</a>
+                        {% for value, label in service_choices %}
+                            <a class="{% if active_service == value %}active{% endif %}" href="/portfolio/?service={{ value }}">{{ label }}</a>
+                        {% endfor %}
+                    </div>
+                    <p class="lead-copy mt-4">Explore related growth services including <a href="/seo-services/">Google Maps SEO</a>, <a href="/google-ads-services/">Meta Ads</a>, <a href="/website-development/">Website Development</a>, and full <a href="/services/">digital marketing services</a>.</p>
+                </div>
+                {% if projects %}
+                    <div class="portfolio-grid">
+                        {% for project in projects %}
+                            <article class="portfolio-card">
+                                {% if project.cover_image %}
+                                    <img src="{{ project.cover_image.url }}" alt="{{ project.business_name }} portfolio case study cover" width="640" height="400" loading="lazy">
+                                {% else %}
+                                    <img class="placeholder-cover" src="{% static 'img/logo.png' %}" alt="{{ project.business_name }} portfolio case study placeholder" width="640" height="400" loading="lazy">
+                                {% endif %}
+                                <div class="portfolio-card-body">
+                                    <span class="tag">{{ project.get_service_type_display }}</span>
+                                    <h3>{{ project.business_name }}</h3>
+                                    <div class="portfolio-meta">{{ project.business_category }} · {{ project.location }}</div>
+                                    <p>{{ project.short_description }}</p>
+                                    {% if project.result_summary %}<p><strong>Goal:</strong> {{ project.result_summary }}</p>{% endif %}
+                                    <a class="case-link" href="{{ project.get_absolute_url }}">View Case Study</a>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <h3>Case studies are being prepared</h3>
+                        <p>Portfolio projects added from Django Admin will appear here automatically when their status is ongoing or completed.</p>
+                        <a class="btn btn-primary" href="/contact/">Discuss Your Project</a>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        {% if featured_projects %}
+        <section>
+            <div class="container">
+                <span class="eyebrow">Featured Work</span>
+                <h2 class="mb-4">Featured case studies</h2>
+                <div class="row g-4">
+                    {% for project in featured_projects %}
+                        <div class="col-md-4"><article class="featured-panel"><h3>{{ project.business_name }}</h3><p>{{ project.short_description }}</p><a class="btn btn-primary" href="{{ project.get_absolute_url }}">Open Case Study</a></article></div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <section class="band">
+            <div class="container">
+                <div class="mb-4"><span class="eyebrow">Before and After</span><h2>What changes with focused digital strategy</h2></div>
+                <div class="compare-grid">
+                    <div class="compare-card"><h3>Before Inkagrowth</h3><ul><li>No Google ranking</li><li>Weak social media presence</li><li>No content strategy</li><li>No ad campaigns</li><li>Low online trust</li></ul></div>
+                    <div class="compare-card"><h3>After Inkagrowth Strategy</h3><ul><li>Proper keyword targeting</li><li>Optimized social media presence</li><li>Regular content strategy</li><li>Meta Ads for awareness and leads</li><li>Better online visibility and trust</li></ul></div>
+                </div>
+            </div>
+        </section>
+
+        {% if testimonials %}
+        <section>
+            <div class="container">
+                <span class="eyebrow">Testimonials</span>
+                <h2 class="mb-4">What clients say</h2>
+                <div class="testimonial-grid">
+                    {% for project in testimonials %}
+                        <article class="testimonial-card">
+                            <p>"{{ project.testimonial_text }}"</p>
+                            <h3>{{ project.testimonial_person_name|default:project.business_name }}</h3>
+                            {% if project.testimonial_person_designation %}<p>{{ project.testimonial_person_designation }}</p>{% endif %}
+                        </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <section class="cta-section">
+            <div class="container">
+                <h2>Want to grow your business like these brands?</h2>
+                <p class="lead-copy">Inkagrowth helps local businesses improve online visibility, generate inquiries, and build trust through result-focused digital marketing.</p>
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <a class="btn btn-primary" href="/contact/">Book Free Consultation</a>
+                    <a class="btn btn-outline-light rounded-pill px-4 py-3 fw-bold" href="https://wa.me/919389826074">WhatsApp Us</a>
+                </div>
+            </div>
+        </section>
+    </main>
+    {% include 'partials/footer.html' %}
+</body>
+</html>

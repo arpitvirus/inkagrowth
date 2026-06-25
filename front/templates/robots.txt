@@ -6,4 +6,4 @@ Disallow: /crm/
 Disallow: /login/
 Disallow: /dashboard/
 
-Sitemap: https://inkagrowth.com/sitemap.xml
+Sitemap: https://www.inkagrowth.com/sitemap.xml

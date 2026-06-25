@@ -117,6 +117,7 @@
             <a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a>
             <a href="/services/" class="{% if request.path == '/services/' %}active{% endif %}">Services</a>
             <a href="/results/" class="{% if request.path == '/results/' %}active{% endif %}">Results</a>
+            <a href="/portfolio/" class="{% if '/portfolio/' in request.path %}active{% endif %}">Portfolio</a>
             <a href="/about/" class="{% if request.path == '/about/' %}active{% endif %}">About</a>
             <a href="/clients/" class="{% if request.path == '/clients/' %}active{% endif %}">Clients</a>
             <a href="/blog/" class="{% if '/blog/' in request.path %}active{% endif %}">Blog</a>

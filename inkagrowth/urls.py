@@ -6,8 +6,10 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from front import views as front_views
+from front.sitemaps import sitemaps
 from crm import views as crm_views
 from django.conf.urls.static import static
+from django.contrib.sitemaps.views import sitemap
 
 # =========================================================
 # FRONTEND VIEWS
@@ -25,7 +27,8 @@ urlpatterns = [
 
     path(
         "sitemap.xml",
-        front_views.sitemap_xml,
+        sitemap,
+        {"sitemaps": sitemaps},
         name="sitemap"
     ),
 
@@ -75,6 +78,18 @@ path(
         'clients/',
         front_views.clients_page,
         name='clients'
+    ),
+
+    path(
+        'portfolio/',
+        front_views.portfolio_page,
+        name='portfolio'
+    ),
+
+    path(
+        'portfolio/<slug:slug>/',
+        front_views.portfolio_detail,
+        name='portfolio_detail'
     ),
 
     path(

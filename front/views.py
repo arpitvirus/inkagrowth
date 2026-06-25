@@ -1,12 +1,12 @@
 import json
 from datetime import date
-from xml.etree.ElementTree import Element, SubElement, tostring
 
 from django.contrib import messages
 from django.http import Http404, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ContactForm
+from .models import PortfolioProject
 
 
 SITE_URL = "https://www.inkagrowth.com"
@@ -465,6 +465,45 @@ def service_landing_schema(page):
     }
 
 
+def portfolio_listing_schema(page):
+    return {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": page["heading"],
+        "url": build_url("/portfolio/"),
+        "description": page["description"],
+        "isPartOf": {"@id": build_url("/#website")},
+        "publisher": {"@id": build_url("/#organization")},
+        "about": {"@id": build_url("/#organization")},
+    }
+
+
+def portfolio_case_study_schema(project, canonical, description, image_url):
+    return {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        "headline": project.business_name,
+        "name": project.seo_title,
+        "description": description,
+        "image": image_url,
+        "author": {"@type": "Organization", "name": BRAND_NAME, "url": SITE_URL},
+        "publisher": {"@id": build_url("/#organization")},
+        "datePublished": project.created_at.date().isoformat(),
+        "dateModified": project.updated_at.date().isoformat(),
+        "url": canonical,
+        "about": {
+            "@type": "LocalBusiness",
+            "name": project.business_name,
+            "description": project.short_description,
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": project.location,
+                "addressCountry": "IN",
+            },
+        },
+    }
+
+
 def faq_schema():
     return {
         "@context": "https://schema.org",
@@ -494,6 +533,21 @@ def breadcrumb_schema(items):
             for index, (name, path) in enumerate(items, start=1)
         ],
     }
+
+
+def absolute_media_url(field):
+    if not field:
+        return build_url("/static/img/logo.png")
+    return build_url(field.url)
+
+
+def portfolio_services(project):
+    services = [
+        service.strip()
+        for service in project.services_provided.split(",")
+        if service.strip()
+    ]
+    return services or [project.get_service_type_display()]
 
 
 def handle_contact_submit(request, redirect_to):
@@ -600,6 +654,93 @@ def about_page(request):
 
 def clients_page(request):
     return render_public_page(request, "clients", "clients.html")
+
+
+def portfolio_page(request):
+    service = request.GET.get("service", "")
+    projects = PortfolioProject.live()
+    if service in dict(PortfolioProject.SERVICE_TYPE_CHOICES):
+        projects = projects.filter(service_type=service)
+
+    featured_projects = PortfolioProject.live().filter(is_featured=True)[:3]
+    testimonials = PortfolioProject.live().exclude(testimonial_text="")[:6]
+    page = {
+        "title": "Portfolio | Digital Marketing Case Studies | Inkagrowth",
+        "description": "Explore Inkagrowth portfolio and case studies of local businesses growing through Google Maps SEO, Meta Ads, social media management, website development, and branding.",
+        "heading": "Our Portfolio",
+        "subheading": "Real work. Real local businesses. Real digital growth.",
+    }
+    return render(
+        request,
+        "portfolio.html",
+        {
+            "page": page,
+            "canonical": build_url("/portfolio/"),
+            "projects": projects,
+            "featured_projects": featured_projects,
+            "testimonials": testimonials,
+            "service_choices": PortfolioProject.SERVICE_TYPE_CHOICES,
+            "active_service": service,
+            "schema_json": jsonld(
+                base_organization_schema(),
+                website_schema(),
+                local_business_schema(),
+                breadcrumb_schema([("INKAGROWTH", "/"), ("Portfolio", "/portfolio/")]),
+                portfolio_listing_schema(page),
+            ),
+        },
+    )
+
+
+def portfolio_detail(request, slug):
+    project = get_object_or_404(PortfolioProject.live(), slug=slug)
+    canonical = build_url(project.get_absolute_url())
+    description = project.seo_description
+    og_image_url = absolute_media_url(project.og_image or project.cover_image)
+    services = portfolio_services(project)
+    metrics = [
+        ("Keywords Targeted", project.keywords_targeted_count),
+        ("Search Visibility", project.search_visibility),
+        ("Profile Views", project.profile_views),
+        ("Direction Requests", project.direction_requests),
+        ("Calls Received", project.calls_received),
+        ("Leads Generated", project.leads_generated),
+        ("Campaigns Run", project.campaigns_run),
+    ]
+    metrics = [(label, value) for label, value in metrics if value not in (None, "")]
+    external_links = [
+        ("Website", project.website_url),
+        ("Instagram", project.instagram_url),
+        ("Facebook", project.facebook_url),
+        ("Google Maps", project.google_maps_url),
+    ]
+    external_links = [(label, url) for label, url in external_links if url]
+    return render(
+        request,
+        "portfolio_detail.html",
+        {
+            "project": project,
+            "canonical": canonical,
+            "meta_title": project.seo_title,
+            "meta_description": description,
+            "og_title": project.og_title or project.seo_title,
+            "og_description": project.og_description or description,
+            "og_image": og_image_url,
+            "services": services,
+            "metrics": metrics,
+            "external_links": external_links,
+            "schema_json": jsonld(
+                base_organization_schema(),
+                local_business_schema(),
+                breadcrumb_schema([
+                    ("INKAGROWTH", "/"),
+                    ("Portfolio", "/portfolio/"),
+                    (project.business_name, project.get_absolute_url()),
+                ]),
+                portfolio_case_study_schema(project, canonical, description, og_image_url),
+            ),
+        },
+    )
 
 
 def service_landing_page(request, slug):
@@ -721,37 +862,6 @@ def blog_post(request, slug):
 
 def robots_txt(request):
     response = render(request, "robots.txt", content_type="text/plain")
-    response.headers.pop("X-Robots-Tag", None)
-    return response
-
-
-def sitemap_xml(request):
-    today = date.today().isoformat()
-    page_paths = [
-        ("/", "1.0"),
-        ("/services/", "0.9"),
-        ("/results/", "0.9"),
-        ("/about/", "0.9"),
-        ("/clients/", "0.9"),
-        ("/about-inkagrowth/", "0.9"),
-        ("/contact/", "0.9"),
-        ("/team/", "0.8"),
-        ("/privacy-policy/", "0.6"),
-        ("/terms-and-conditions/", "0.6"),
-        ("/blog/", "0.8"),
-    ]
-    landing_paths = [(page["path"], "0.85") for page in SERVICE_LANDING_PAGES.values()]
-    post_paths = [(f"/blog/{slug}/", "0.7") for slug in BLOG_POSTS]
-    urlset = Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
-    for path, priority in page_paths + landing_paths + post_paths:
-        url = SubElement(urlset, "url")
-        SubElement(url, "loc").text = build_url(path)
-        SubElement(url, "lastmod").text = today
-        SubElement(url, "changefreq").text = "monthly"
-        SubElement(url, "priority").text = priority
-
-    xml = b'<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(urlset, encoding="utf-8")
-    response = HttpResponse(xml, content_type="application/xml")
     response.headers.pop("X-Robots-Tag", None)
     return response
 
