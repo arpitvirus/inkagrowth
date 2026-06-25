@@ -5,6 +5,7 @@ services:
     plan: free
     branch: main
     buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    preDeployCommand: python manage.py migrate
     startCommand: gunicorn inkagrowth.wsgi:application
     envVars:
       - key: DJANGO_DEBUG

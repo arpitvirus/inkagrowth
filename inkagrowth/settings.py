@@ -83,12 +83,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'inkagrowth.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
-
-
-
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
@@ -176,9 +170,17 @@ GOOGLE_SHEETS_SYNC_ENABLED = (
 )
 
 
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if not DATABASE_URL and not DEBUG:
+    raise ImproperlyConfigured('DATABASE_URL environment variable is required when DJANGO_DEBUG is false.')
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
+        default=DATABASE_URL or f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=int(os.environ.get('DB_CONN_MAX_AGE', '600')),
+        conn_health_checks=True,
+        ssl_require=os.environ.get('DB_SSL_REQUIRE', str(not DEBUG)).lower() in TRUE_VALUES,
     )
 }
 
